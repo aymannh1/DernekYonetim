@@ -1,0 +1,117 @@
+﻿@model DernekYonetim.ViewModels.ProjeViewModel
+
+<form asp-action="@(Model.Id == 0 ? "Olustur" : "Duzenle")" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+
+    <div class="mb-3">
+        <label asp-for="Baslik" class="form-label">Proje Başlığı *</label>
+        <input asp-for="Baslik" class="form-control" placeholder="Örn: Etiyopya Su Kuyusu Projesi" />
+        <span asp-validation-for="Baslik" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Aciklama" class="form-label">Açıklama</label>
+        <textarea asp-for="Aciklama" class="form-control" rows="4"
+                  placeholder="Proje hakkında detaylı bilgi..."></textarea>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Kategori" class="form-label">Kategori *</label>
+            <select asp-for="Kategori" class="form-select" id="kategoriSelect"
+                    onchange="toggleDiger(this)">
+                <option value="@DernekYonetim.Models.ProjeKategori.SuKuyusu">Su Kuyusu</option>
+                <option value="@DernekYonetim.Models.ProjeKategori.OkulInsaati">Okul İnşaatı</option>
+                <option value="@DernekYonetim.Models.ProjeKategori.CamiInsaati">Cami İnşaatı</option>
+                <option value="@DernekYonetim.Models.ProjeKategori.GidaYardimi">Gıda Yardımı</option>
+                <option value="@DernekYonetim.Models.ProjeKategori.Katarakt">Katarakt</option>
+                <option value="@DernekYonetim.Models.ProjeKategori.Diger">Diğer</option>
+            </select>
+        </div>
+        <div class="col-md-6 mb-3" id="digerAlani"
+             style="display:@(Model.Kategori == DernekYonetim.Models.ProjeKategori.Diger ? "block" : "none")">
+            <label asp-for="DigerKategori" class="form-label">Diğer Kategori Adı</label>
+            <input asp-for="DigerKategori" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Ulke" class="form-label">Ülke *</label>
+            <input asp-for="Ulke" class="form-control" list="ulkeList"
+                   placeholder="Etiyopya, Somali, Sudan..." />
+            <datalist id="ulkeList">
+                <option value="Etiyopya" />
+                <option value="Somali" />
+                <option value="Sudan" />
+                <option value="Eritre" />
+                <option value="Kenya" />
+                <option value="Cibuti" />
+            </datalist>
+            <span asp-validation-for="Ulke" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="Sehir" class="form-label">Şehir / Bölge</label>
+            <input asp-for="Sehir" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="HedefButce" class="form-label">Hedef Bütçe (₺)</label>
+            <input asp-for="HedefButce" type="number" step="0.01" class="form-control" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="ToplamBagis" class="form-label">Toplam Bağış (₺)</label>
+            <input asp-for="ToplamBagis" type="number" step="0.01" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="Durum" class="form-label">Durum</label>
+            <select asp-for="Durum" class="form-select">
+                <option value="@DernekYonetim.Models.ProjeDurumu.Planlandi">Planlandı</option>
+                <option value="@DernekYonetim.Models.ProjeDurumu.Devam">Devam Ediyor</option>
+                <option value="@DernekYonetim.Models.ProjeDurumu.Tamamlandi">Tamamlandı</option>
+                <option value="@DernekYonetim.Models.ProjeDurumu.Durduruldu">Durduruldu</option>
+            </select>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="BaslangicTarihi" class="form-label">Başlangıç *</label>
+            <input asp-for="BaslangicTarihi" type="date" class="form-control"
+                   value="@Model.BaslangicTarihi.ToString("yyyy-MM-dd")" />
+            <span asp-validation-for="BaslangicTarihi" class="text-danger small"></span>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="BitisTarihi" class="form-label">Bitiş (opsiyonel)</label>
+            <input asp-for="BitisTarihi" type="date" class="form-control"
+                   value="@Model.BitisTarihi?.ToString("yyyy-MM-dd")" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="KapakFoto" class="form-label">Kapak Fotoğrafı</label>
+        <input asp-for="KapakFoto" type="file" class="form-control"
+               accept=".jpg,.jpeg,.png" />
+        <div class="form-text">JPG veya PNG — Max 5MB</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">
+        <i class="bi bi-save"></i> Kaydet
+    </button>
+</form>
+
+@section Scripts {
+    <script>
+        function toggleDiger(sel) {
+            document.getElementById('digerAlani').style.display =
+                sel.value === '@((int)DernekYonetim.Models.ProjeKategori.Diger)' ||
+                sel.value === 'Diger' ? 'block' : 'none';
+        }
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

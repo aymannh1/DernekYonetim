@@ -1,0 +1,158 @@
+﻿@model List<DernekYonetim.Models.Aidat>
+@{
+    ViewData["Title"] = "Aidat Yönetimi";
+    var ist = (DernekYonetim.Services.AidatIstatistik)ViewBag.Istatistik;
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-cash-stack"></i> Aidat Yönetimi</h4>
+        <a asp-action="TopluOlustur" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle"></i> Toplu Aidat Oluştur
+        </a>
+    </div>
+
+    @if (TempData["Basari"] != null)
+    {
+        <div class="alert alert-success">@TempData["Basari"]</div>
+    }
+
+    <!-- İSTATİSTİK -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-success shadow-sm">
+                <div class="card-body">
+                    <div class="small">Ödendi</div>
+                    <div class="fs-4 fw-bold">@ist.Odendi / @ist.Toplam</div>
+                    <div class="small">@ist.ToplamTutar.ToString("C", new System.Globalization.CultureInfo("tr-TR"))</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning shadow-sm">
+                <div class="card-body">
+                    <div class="small">Bekliyor</div>
+                    <div class="fs-4 fw-bold">@ist.Bekliyor</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger shadow-sm">
+                <div class="card-body">
+                    <div class="small">Gecikti</div>
+                    <div class="fs-4 fw-bold">@ist.Gecikti</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary shadow-sm">
+                <div class="card-body">
+                    <div class="small">Bekleyen Tutar</div>
+                    <div class="fs-4 fw-bold">@ist.BekleyenTutar.ToString("C", new System.Globalization.CultureInfo("tr-TR"))</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FİLTRE -->
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-md-4">
+            <select name="donem" class="form-select">
+                <option value="">-- Tüm Dönemler --</option>
+                @foreach (var d in (List<string>)ViewBag.Donemler)
+                {
+                    <option value="@d" selected="@(ViewBag.Donem == d)">@d</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <select name="durum" class="form-select">
+                <option value="">-- Tüm Durumlar --</option>
+                @foreach (var d in Enum.GetValues<DernekYonetim.Models.OdemeDurumu>())
+                {
+                    <option value="@d">@d</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filtrele</button>
+        </div>
+    </form>
+
+    <!-- TABLO -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Üye</th>
+                        <th>Dönem</th>
+                        <th>Tutar</th>
+                        <th>Son Ödeme</th>
+                        <th>Durum</th>
+                        <th>Dekont</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model)
+                    {
+                        <tr>
+                            <td>@a.Uye?.TamAd</td>
+                            <td>@a.Donem</td>
+                            <td>@a.Tutar.ToString("C", new System.Globalization.CultureInfo("tr-TR"))</td>
+                            <td>@a.SonOdemeTarihi.ToString("dd.MM.yyyy")</td>
+                            <td>
+                                @switch (a.OdemeDurumu)
+                                {
+                                    case DernekYonetim.Models.OdemeDurumu.Odendi:
+                                        <span class="badge bg-success">Ödendi</span>
+                                        break;
+                                    case DernekYonetim.Models.OdemeDurumu.Bekliyor:
+                                        <span class="badge bg-warning text-dark">Bekliyor</span>
+                                        break;
+                                    case DernekYonetim.Models.OdemeDurumu.Gecikti:
+                                        <span class="badge bg-danger">Gecikti</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-secondary">İptal</span>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(a.DekontUrl))
+                                {
+                                    <a href="@a.DekontUrl" target="_blank" class="btn btn-outline-info btn-sm">
+                                        <i class="bi bi-file-earmark"></i> Gör
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(a.DekontUrl) && !a.DekontOnaylandi)
+                                {
+                                    <form asp-action="DekontOnayla" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@a.Id" />
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="bi bi-check"></i> Onayla
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">Kayıt bulunamadı.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

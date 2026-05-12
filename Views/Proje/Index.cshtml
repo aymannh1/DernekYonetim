@@ -1,0 +1,227 @@
+﻿@model List<DernekYonetim.Models.Proje>
+@{
+    ViewData["Title"] = "HAKID Projeleri";
+    var ulkeler = ViewBag.Ulkeler as List<string> ?? new();
+}
+
+<div class="container">
+    <!-- BAŞLIK -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-0"><i class="bi bi-globe2"></i> HAKID Projeleri</h4>
+            <small class="text-muted">Habesistan Araştırma ve Kalkınma Derneği</small>
+        </div>
+        @if (User.IsInRole("Admin") || User.IsInRole("Yonetim"))
+        {
+            <a asp-action="Olustur" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-circle"></i> Yeni Proje
+            </a>
+        }
+    </div>
+
+    @if (TempData["Basari"] != null)
+    {
+        <div class="alert alert-success">@TempData["Basari"]</div>
+    }
+
+    <!-- FİLTRELER -->
+    <form method="get" class="row g-2 mb-4">
+        <div class="col-md-3">
+            <select name="kategori" class="form-select form-select-sm">
+                <option value="">-- Tüm Kategoriler --</option>
+                @foreach (var k in Enum.GetValues<DernekYonetim.Models.ProjeKategori>())
+                {
+                    <option value="@k" selected="@(ViewBag.Kategori?.ToString() == k.ToString())">
+                        @switch (k)
+                        {
+                            case DernekYonetim.Models.ProjeKategori.SuKuyusu:
+                                @:Su Kuyusu
+                                break;
+                            case DernekYonetim.Models.ProjeKategori.OkulInsaati:
+                                @:Okul İnşaatı
+                                break;
+                            case DernekYonetim.Models.ProjeKategori.CamiInsaati:
+                                @:Cami İnşaatı
+                                break;
+                            case DernekYonetim.Models.ProjeKategori.GidaYardimi:
+                                @:Gıda Yardımı
+                                break;
+                            case DernekYonetim.Models.ProjeKategori.Katarakt:
+                                @:Katarakt
+                                break;
+                            default:
+                                @:Diğer
+                                break;
+                        }
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="durum" class="form-select form-select-sm">
+                <option value="">-- Tüm Durumlar --</option>
+                @foreach (var d in Enum.GetValues<DernekYonetim.Models.ProjeDurumu>())
+                {
+                    <option value="@d">
+                        @switch (d)
+                        {
+                            case DernekYonetim.Models.ProjeDurumu.Planlandi:
+                                {
+                                    @:Planlandı
+                                    break;
+                                }
+
+                            case DernekYonetim.Models.ProjeDurumu.Devam:
+                                {
+                                    @:Devam Ediyor
+                                    break;
+                                }
+
+                            case DernekYonetim.Models.ProjeDurumu.Tamamlandi:
+                                {
+                                    @:Tamamlandı
+                                    break;
+                                }
+
+                            default:
+                                {
+                                    @:Durduruldu
+                                    break;
+                                }
+                        }
+                    }
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="ulke" class="form-select form-select-sm">
+                <option value="">-- Tüm Ülkeler --</option>
+                @foreach (var u in ulkeler)
+                {
+                    <option value="@u" selected="@(ViewBag.Ulke == u)">@u</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary btn-sm w-100">
+                <i class="bi bi-search"></i> Filtrele
+            </button>
+        </div>
+    </form>
+
+    <!-- PROJE KARTLARI -->
+    @if (!Model.Any())
+    {
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-folder-x" style="font-size:3rem"></i>
+            <p class="mt-2">Henüz proje bulunmuyor.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var p in Model)
+            {
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100">
+                        <!-- Kapak fotoğrafı -->
+                        @if (!string.IsNullOrEmpty(p.KapakFotoUrl))
+                        {
+                            <img src="@p.KapakFotoUrl" class="card-img-top"
+                                 style="height:200px;object-fit:cover" alt="@p.Baslik" />
+                        }
+                        else
+                        {
+                            <div class="bg-light d-flex align-items-center justify-content-center"
+                                 style="height:200px">
+                                @switch (p.Kategori)
+                                {
+                                    case DernekYonetim.Models.ProjeKategori.SuKuyusu:
+                                        <i class="bi bi-droplet text-primary" style="font-size:3rem"></i>
+                                        break;
+                                    case DernekYonetim.Models.ProjeKategori.OkulInsaati:
+                                        <i class="bi bi-mortarboard text-warning" style="font-size:3rem"></i>
+                                        break;
+                                    case DernekYonetim.Models.ProjeKategori.CamiInsaati:
+                                        <i class="bi bi-building text-success" style="font-size:3rem"></i>
+                                        break;
+                                    case DernekYonetim.Models.ProjeKategori.GidaYardimi:
+                                        <i class="bi bi-basket text-danger" style="font-size:3rem"></i>
+                                        break;
+                                    case DernekYonetim.Models.ProjeKategori.Katarakt:
+                                        <i class="bi bi-eye text-info" style="font-size:3rem"></i>
+                                        break;
+                                    default:
+                                        <i class="bi bi-globe2 text-secondary" style="font-size:3rem"></i>
+                                        break;
+                                }
+                            </div>
+                        }
+
+                        <div class="card-body">
+                            <!-- Durum badge -->
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge @(p.Kategori == DernekYonetim.Models.ProjeKategori.SuKuyusu ? "bg-primary" :
+                                                                                           p.Kategori == DernekYonetim.Models.ProjeKategori.OkulInsaati ? "bg-warning text-dark" :
+                                                                                           p.Kategori == DernekYonetim.Models.ProjeKategori.CamiInsaati ? "bg-success" :
+                                                                                           p.Kategori == DernekYonetim.Models.ProjeKategori.GidaYardimi ? "bg-danger" :
+                                                                                           p.Kategori == DernekYonetim.Models.ProjeKategori.Katarakt ? "bg-info" : "bg-secondary")">
+                                    @(p.Kategori == DernekYonetim.Models.ProjeKategori.SuKuyusu ? "Su Kuyusu" :
+                                                                p.Kategori == DernekYonetim.Models.ProjeKategori.OkulInsaati ? "Okul İnşaatı" :
+                                                                p.Kategori == DernekYonetim.Models.ProjeKategori.CamiInsaati ? "Cami İnşaatı" :
+                                                                p.Kategori == DernekYonetim.Models.ProjeKategori.GidaYardimi ? "Gıda Yardımı" :
+                                                                p.Kategori == DernekYonetim.Models.ProjeKategori.Katarakt ? "Katarakt" :
+                                                                p.DigerKategori ?? "Diğer")
+                        </span>
+                        <span class="badge @(p.Durum == DernekYonetim.Models.ProjeDurumu.Tamamlandi ? "bg-success" :
+                                                                                           p.Durum == DernekYonetim.Models.ProjeDurumu.Devam ? "bg-primary" :
+                                                                                           p.Durum == DernekYonetim.Models.ProjeDurumu.Planlandi ? "bg-warning text-dark" : "bg-secondary")">
+                                    @(p.Durum == DernekYonetim.Models.ProjeDurumu.Tamamlandi ? "Tamamlandı" :
+                                                                p.Durum == DernekYonetim.Models.ProjeDurumu.Devam ? "Devam Ediyor" :
+                                                                p.Durum == DernekYonetim.Models.ProjeDurumu.Planlandi ? "Planlandı" : "Durduruldu")
+                        </span>
+                    </div>
+
+                            <h6 class="card-title">@p.Baslik</h6>
+
+                            <p class="text-muted small mb-1">
+                                <i class="bi bi-geo-alt"></i>
+                                @p.Ulke @(!string.IsNullOrEmpty(p.Sehir) ? $"/ {p.Sehir}" : "")
+                            </p>
+
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-calendar3"></i>
+                                @p.BaslangicTarihi.ToString("dd.MM.yyyy")
+                            </p>
+
+                            <!-- İçerik sayaçları -->
+                            <div class="d-flex gap-3 text-muted small mb-2">
+                                <span><i class="bi bi-image"></i> @p.FotografSayisi</span>
+                                <span><i class="bi bi-file-earmark"></i> @p.BelgeSayisi</span>
+                                <span><i class="bi bi-play-circle"></i> @p.VideoSayisi</span>
+                            </div>
+
+                            <!-- İlerleme -->
+                    @{
+                                var sonGuncelleme = p.Guncellemeler.OrderByDescending(g => g.Tarih).FirstOrDefault();
+                                var ilerleme = sonGuncelleme != null ? (int)sonGuncelleme.IlerlemeYuzdesi : 0;
+                            }
+                            <div class="progress mb-2" style="height:6px">
+                                <div class="progress-bar bg-success" style="width:@ilerleme%"></div>
+                            </div>
+                            <small class="text-muted">%@ilerleme tamamlandı</small>
+                        </div>
+
+                        <div class="card-footer bg-transparent">
+                            <a asp-action="Detay" asp-route-id="@p.Id"
+                               class="btn btn-outline-primary btn-sm w-100">
+                                <i class="bi bi-eye"></i> Projeyi İncele
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

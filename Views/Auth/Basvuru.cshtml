@@ -1,0 +1,78 @@
+﻿@model DernekYonetim.ViewModels.BasvuruViewModel
+@{
+    ViewData["Title"] = "Üyelik Başvurusu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-7">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h4 class="card-title text-center mb-4">
+                        <i class="bi bi-person-plus"></i> Üyelik Başvurusu
+                    </h4>
+
+                    <form asp-action="Basvuru" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Ad" class="form-label">Ad *</label>
+                                <input asp-for="Ad" class="form-control" />
+                                <span asp-validation-for="Ad" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Soyad" class="form-label">Soyad *</label>
+                                <input asp-for="Soyad" class="form-control" />
+                                <span asp-validation-for="Soyad" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">E-posta *</label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Telefon" class="form-label">Telefon *</label>
+                            <input asp-for="Telefon" class="form-control" placeholder="05XX XXX XX XX" />
+                            <span asp-validation-for="Telefon" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Meslek" class="form-label">Meslek</label>
+                            <input asp-for="Meslek" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Adres" class="form-label">Adres</label>
+                            <textarea asp-for="Adres" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="BasvuruNotu" class="form-label">Başvuru Notu</label>
+                            <textarea asp-for="BasvuruNotu" class="form-control" rows="3"
+                                      placeholder="Neden üye olmak istiyorsunuz?"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Başvuru Gönder</button>
+                    </form>
+
+                    <hr />
+                    <p class="text-center mb-0 small">
+                        Zaten hesabınız var mı?
+                        <a asp-action="Login">Giriş yapın</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,122 @@
+﻿@model List<DernekYonetim.Models.Belge>
+@{
+    ViewData["Title"] = "Belgeler";
+    var kategoriler = ViewBag.Kategoriler as List<string> ?? new();
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-folder2-open"></i> Belgeler</h4>
+        @if (User.IsInRole("Admin") || User.IsInRole("Yonetim"))
+        {
+            <a asp-action="Yukle" class="btn btn-primary btn-sm">
+                <i class="bi bi-upload"></i> Belge Yükle
+            </a>
+        }
+    </div>
+
+    @if (TempData["Basari"] != null)
+    {
+        <div class="alert alert-success">@TempData["Basari"]</div>
+    }
+
+    <!-- KATEGORİ FİLTRE -->
+    @if (kategoriler.Any())
+    {
+        <div class="d-flex gap-2 flex-wrap mb-4">
+            <a asp-action="Index" class="btn btn-sm @(ViewBag.Kategori == null ? "btn-primary" : "btn-outline-primary")">
+                Tümü
+            </a>
+            @foreach (var k in kategoriler)
+            {
+                <a asp-action="Index" asp-route-kategori="@k"
+                   class="btn btn-sm @(ViewBag.Kategori == k ? "btn-primary" : "btn-outline-primary")">
+                    @k
+                </a>
+            }
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-folder-x" style="font-size:3rem"></i>
+            <p class="mt-2">Henüz belge bulunmuyor.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var b in Model)
+            {
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-start gap-3">
+                                <!-- Dosya ikonu türe göre -->
+                                @if (b.DosyaTipi == "pdf")
+                                {
+                                    <i class="bi bi-file-pdf text-danger fs-1 flex-shrink-0"></i>
+                                }
+                                else if (b.DosyaTipi is "jpg" or "jpeg" or "png")
+                                {
+                                    <i class="bi bi-file-image text-primary fs-1 flex-shrink-0"></i>
+                                }
+                                else if (b.DosyaTipi is "docx" or "doc")
+                                {
+                                    <i class="bi bi-file-word text-primary fs-1 flex-shrink-0"></i>
+                                }
+                                else if (b.DosyaTipi is "xlsx" or "xls")
+                                {
+                                    <i class="bi bi-file-excel text-success fs-1 flex-shrink-0"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-file-earmark text-secondary fs-1 flex-shrink-0"></i>
+                                }
+
+                                <div class="flex-grow-1 min-width-0">
+                                    <h6 class="mb-1">@b.Baslik</h6>
+                                    @if (!string.IsNullOrEmpty(b.Aciklama))
+                                    {
+                                        <p class="text-muted small mb-1">@b.Aciklama</p>
+                                    }
+                                    <div class="d-flex gap-1 flex-wrap">
+                                        <span class="badge bg-secondary">@b.Kategori</span>
+                                        @if (b.ErisimSeviyesi == DernekYonetim.Models.BelgeErisim.SadeceYonetim)
+                                        {
+                                            <span class="badge bg-warning text-dark">Yönetime Özel</span>
+                                        }
+                                    </div>
+                                    <p class="text-muted small mt-1 mb-0">
+                                        <i class="bi bi-clock"></i>
+                                        @b.YuklemeTarihi.ToString("dd.MM.yyyy")
+                                        &nbsp;·&nbsp;
+                                        @((b.DosyaBoyutu / 1024.0).ToString("F1")) KB
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent d-flex gap-2">
+                            <a href="@b.DosyaYolu" target="_blank"
+                               class="btn btn-outline-primary btn-sm flex-fill">
+                                <i class="bi bi-download"></i> İndir
+                            </a>
+                            @if (User.IsInRole("Admin") || User.IsInRole("Yonetim"))
+                            {
+                                <form asp-action="Sil" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@b.Id" />
+                                    <button type="submit" class="btn btn-outline-danger btn-sm"
+                                            onclick="return confirm('Belgeyi silmek istediğinizden emin misiniz?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

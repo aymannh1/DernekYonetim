@@ -1,0 +1,121 @@
+﻿@model DernekYonetim.Models.Uye
+@{
+    ViewData["Title"] = "Üye Paneli";
+}
+
+<div class="container">
+    <h4 class="mb-4">
+        <i class="bi bi-person-circle"></i> Hoş geldiniz, @Model.Ad!
+    </h4>
+
+    <div class="row g-4">
+
+        <!-- PROFİL KARTI -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-person-circle text-primary" style="font-size:4rem"></i>
+                    <h5 class="mt-3 mb-1">@Model.TamAd</h5>
+                    <p class="text-muted small mb-1">@Model.Email</p>
+                    <span class="badge bg-success mb-3">@Model.UyelikDurumu</span>
+                    <div class="text-muted small mb-3">
+                        <i class="bi bi-credit-card"></i> Üye No: <strong>@Model.UyeNo</strong>
+                    </div>
+                    <a asp-action="Profil" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                        <i class="bi bi-pencil"></i> Profili Düzenle
+                    </a>
+                    <a asp-action="SifreDegistir" class="btn btn-outline-secondary btn-sm w-100">
+                        <i class="bi bi-lock"></i> Şifre Değiştir
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- AİDAT DURUMU -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong><i class="bi bi-cash"></i> Aidat Durumum</strong>
+                </div>
+                <div class="card-body">
+                    @if (!Model.Aidatlar.Any())
+                    {
+                        <p class="text-muted mb-0">Henüz aidat kaydınız bulunmuyor.</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Dönem</th>
+                                        <th>Tutar</th>
+                                        <th>Son Ödeme</th>
+                                        <th>Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var a in Model.Aidatlar.OrderByDescending(a => a.Donem).Take(6))
+                                    {
+                                        <tr>
+                                            <td>@a.Donem</td>
+                                            <td>@a.Tutar.ToString("C", new System.Globalization.CultureInfo("tr-TR"))</td>
+                                            <td>@a.SonOdemeTarihi.ToString("dd.MM.yyyy")</td>
+                                            <td>
+                                                @switch (a.OdemeDurumu)
+                                                {
+                                                    case DernekYonetim.Models.OdemeDurumu.Odendi:
+                                                        <span class="badge bg-success">Ödendi</span>
+                                                        break;
+                                                    case DernekYonetim.Models.OdemeDurumu.Bekliyor:
+                                                        <span class="badge bg-warning text-dark">Bekliyor</span>
+                                                        break;
+                                                    case DernekYonetim.Models.OdemeDurumu.Gecikti:
+                                                        <span class="badge bg-danger">Gecikti</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-secondary">İptal</span>
+                                                        break;
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- ETKİNLİKLERİM -->
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <strong><i class="bi bi-calendar-event"></i> Kayıtlı Etkinliklerim</strong>
+                </div>
+                <div class="card-body">
+                    @if (!Model.EtkinlikKayitlari.Any())
+                    {
+                        <p class="text-muted mb-0">Henüz etkinlik kaydınız bulunmuyor.</p>
+                    }
+                    else
+                    {
+                        @foreach (var k in Model.EtkinlikKayitlari.Take(3))
+                        {
+                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                <div>
+                                    <div class="fw-500">@k.Etkinlik?.Baslik</div>
+                                    <div class="text-muted small">
+                                        <i class="bi bi-calendar3"></i>
+                                        @k.Etkinlik?.BaslangicTarihi.ToString("dd.MM.yyyy HH:mm")
+                                    </div>
+                                </div>
+                                <span class="badge bg-primary">@k.Etkinlik?.Kategori</span>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

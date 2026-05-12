@@ -1,0 +1,81 @@
+﻿@model DernekYonetim.ViewModels.BelgeYukleViewModel
+@{
+    ViewData["Title"] = "Belge Yükle";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4><i class="bi bi-upload"></i> Belge Yükle</h4>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Geri
+                </a>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="Yukle" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Baslik" class="form-label">Başlık *</label>
+                            <input asp-for="Baslik" class="form-control" />
+                            <span asp-validation-for="Baslik" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Aciklama" class="form-label">Açıklama</label>
+                            <textarea asp-for="Aciklama" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Kategori" class="form-label">Kategori *</label>
+                                <input asp-for="Kategori" class="form-control"
+                                       list="kategoriList"
+                                       placeholder="Tüzük, Yönetmelik, Tutanak..." />
+                                <datalist id="kategoriList">
+                                    <option value="Tüzük" />
+                                    <option value="Yönetmelik" />
+                                    <option value="Tutanak" />
+                                    <option value="Form" />
+                                    <option value="Rapor" />
+                                    <option value="Diğer" />
+                                </datalist>
+                                <span asp-validation-for="Kategori" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ErisimSeviyesi" class="form-label">Erişim Seviyesi</label>
+                                <select asp-for="ErisimSeviyesi" class="form-select"
+                                        asp-items="Html.GetEnumSelectList<DernekYonetim.Models.BelgeErisim>()">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Dosya" class="form-label">Dosya *</label>
+                            <input asp-for="Dosya" type="file" class="form-control"
+                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" />
+                            <div class="form-text">
+                                PDF, Word, Excel, JPG veya PNG — Max 10MB
+                            </div>
+                            <span asp-validation-for="Dosya" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-upload"></i> Yükle
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,69 @@
+﻿@model DernekYonetim.ViewModels.ProfilViewModel
+@{
+    ViewData["Title"] = "Profilim";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4><i class="bi bi-pencil-square"></i> Profili Düzenle</h4>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Panele Dön
+                </a>
+            </div>
+
+            @if (TempData["Basari"] != null)
+            {
+                <div class="alert alert-success">@TempData["Basari"]</div>
+            }
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="Profil" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Ad" class="form-label">Ad *</label>
+                                <input asp-for="Ad" class="form-control" />
+                                <span asp-validation-for="Ad" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Soyad" class="form-label">Soyad *</label>
+                                <input asp-for="Soyad" class="form-control" />
+                                <span asp-validation-for="Soyad" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Telefon" class="form-label">Telefon *</label>
+                            <input asp-for="Telefon" class="form-control" />
+                            <span asp-validation-for="Telefon" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Meslek" class="form-label">Meslek</label>
+                            <input asp-for="Meslek" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Adres" class="form-label">Adres</label>
+                            <textarea asp-for="Adres" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-save"></i> Kaydet
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

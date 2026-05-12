@@ -1,0 +1,87 @@
+﻿@model List<DernekYonetim.Models.Aidat>
+@{
+    ViewData["Title"] = "Aidatlarım";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-cash"></i> Aidatlarım</h4>
+        <a asp-controller="Uye" asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Panele Dön
+        </a>
+    </div>
+
+    @if (TempData["Basari"] != null)
+    {
+        <div class="alert alert-success">@TempData["Basari"]</div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Dönem</th>
+                        <th>Tutar</th>
+                        <th>Son Ödeme</th>
+                        <th>Durum</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model)
+                    {
+                        <tr>
+                            <td>@a.Donem</td>
+                            <td>@a.Tutar.ToString("C", new System.Globalization.CultureInfo("tr-TR"))</td>
+                            <td>@a.SonOdemeTarihi.ToString("dd.MM.yyyy")</td>
+                            <td>
+                                @switch (a.OdemeDurumu)
+                                {
+                                    case DernekYonetim.Models.OdemeDurumu.Odendi:
+                                        <span class="badge bg-success">Ödendi ✓</span>
+                                        break;
+                                    case DernekYonetim.Models.OdemeDurumu.Bekliyor:
+                                        <span class="badge bg-warning text-dark">Bekliyor</span>
+                                        break;
+                                    case DernekYonetim.Models.OdemeDurumu.Gecikti:
+                                        <span class="badge bg-danger">Gecikti!</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-secondary">İptal</span>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                @if (a.OdemeDurumu != DernekYonetim.Models.OdemeDurumu.Odendi)
+                                {
+                                    @if (!string.IsNullOrEmpty(a.DekontUrl))
+                                    {
+                                        <span class="text-muted small">
+                                            <i class="bi bi-clock"></i> Onay bekleniyor
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <a asp-action="DekontYukle" asp-route-id="@a.Id"
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-upload"></i> Dekont Yükle
+                                        </a>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                Henüz aidat kaydınız bulunmuyor.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

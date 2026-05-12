@@ -1,0 +1,123 @@
+﻿@model List<DernekYonetim.Models.Basvuru>
+@{
+    ViewData["Title"] = "Başvurular";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-clipboard-check"></i> Üyelik Başvuruları</h4>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Panele Dön
+        </a>
+    </div>
+
+    @if (TempData["Basari"] != null)
+    {
+        <div class="alert alert-success">@TempData["Basari"]</div>
+    }
+    @if (TempData["Hata"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Hata"]</div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ad Soyad</th>
+                        <th>E-posta</th>
+                        <th>Telefon</th>
+                        <th>Tarih</th>
+                        <th>Durum</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var b in Model)
+                    {
+                        <tr>
+                            <td>@b.TamAd</td>
+                            <td>@b.Email</td>
+                            <td>@b.Telefon</td>
+                            <td>@b.BasvuruTarihi.ToString("dd.MM.yyyy")</td>
+                            <td>
+                                @if (b.Durum == DernekYonetim.Models.BasvuruDurumu.Bekliyor)
+                                {
+                                    <span class="badge bg-warning text-dark">Bekliyor</span>
+                                }
+                                else if (b.Durum == DernekYonetim.Models.BasvuruDurumu.Onaylandi)
+                                {
+                                    <span class="badge bg-success">Onaylandı</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Reddedildi</span>
+                                }
+                            </td>
+                            <td>
+                                @if (b.Durum == DernekYonetim.Models.BasvuruDurumu.Bekliyor)
+                                {
+                                    <form asp-action="BasvuruOnayla" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@b.Id" />
+                                        <button type="submit" class="btn btn-success btn-sm"
+                                                onclick="return confirm('Başvuruyu onaylamak istediğinizden emin misiniz?')">
+                                            <i class="bi bi-check"></i> Onayla
+                                        </button>
+                                    </form>
+                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#redModal" data-id="@b.Id">
+                                        <i class="bi bi-x"></i> Reddet
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                Henüz başvuru bulunmuyor.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Red Modal -->
+<div class="modal fade" id="redModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="BasvuruReddet" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title">Başvuruyu Reddet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="modalBasvuruId" />
+                    <div class="mb-3">
+                        <label class="form-label">Red Nedeni</label>
+                        <textarea name="redNedeni" class="form-control" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-danger">Reddet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('redModal').addEventListener('show.bs.modal', function (e) {
+            document.getElementById('modalBasvuruId').value = e.relatedTarget.dataset.id;
+        });
+    </script>
+}

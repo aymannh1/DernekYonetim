@@ -1,0 +1,111 @@
+﻿@model DernekYonetim.Models.Etkinlik
+@{
+    ViewData["Title"] = Model.Baslik;
+    var kayitliMi = (bool)ViewBag.KayitliMi;
+    var doluKontenjan = Model.Kayitlar.Count(k => k.Durum == DernekYonetim.Models.EtkinlikKayitDurumu.Onaylandi);
+    var kontenjanDolduMu = Model.Kontenjan.HasValue && doluKontenjan >= Model.Kontenjan.Value;
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4><i class="bi bi-calendar-event"></i> @Model.Baslik</h4>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Geri
+                </a>
+            </div>
+
+            @if (TempData["Basari"] != null)
+            {
+                <div class="alert alert-success">@TempData["Basari"]</div>
+            }
+            @if (TempData["Hata"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Hata"]</div>
+            }
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex gap-2 mb-3">
+                        <span class="badge bg-primary">@Model.Kategori</span>
+                        @if (Model.UcretsizMi)
+                        {
+                            <span class="badge bg-success">Ücretsiz</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">
+                                @Model.Ucret?.ToString("C", new System.Globalization.CultureInfo("tr-TR"))
+                            </span>
+                        }
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-4">Başlangıç</dt>
+                        <dd class="col-sm-8">@Model.BaslangicTarihi.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                        <dt class="col-sm-4">Bitiş</dt>
+                        <dd class="col-sm-8">@Model.BitisTarihi.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                        @if (!string.IsNullOrEmpty(Model.Yer))
+                        {
+                            <dt class="col-sm-4">Yer</dt>
+                            <dd class="col-sm-8">@Model.Yer</dd>
+                        }
+
+                        @if (Model.Kontenjan.HasValue)
+                        {
+                            <dt class="col-sm-4">Kontenjan</dt>
+                            <dd class="col-sm-8">@doluKontenjan / @Model.Kontenjan kişi</dd>
+                        }
+                    </dl>
+
+                    @if (!string.IsNullOrEmpty(Model.Aciklama))
+                    {
+                        <hr />
+                        <p>@Model.Aciklama</p>
+                    }
+
+                    <hr />
+
+                    @if (kayitliMi)
+                    {
+                        <form asp-action="KayitIptal" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <button type="submit" class="btn btn-danger w-100"
+                                    onclick="return confirm('Kaydınızı iptal etmek istediğinizden emin misiniz?')">
+                                <i class="bi bi-x-circle"></i> Kaydı İptal Et
+                            </button>
+                        </form>
+                    }
+                    else if (kontenjanDolduMu)
+                    {
+                        <button class="btn btn-secondary w-100" disabled>
+                            <i class="bi bi-x-circle"></i> Kontenjan Doldu
+                        </button>
+                    }
+                    else
+                    {
+                        <form asp-action="KayitOl" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-check-circle"></i> Etkinliğe Kayıt Ol
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+
+            @if (User.IsInRole("Admin") || User.IsInRole("Yonetim"))
+            {
+                <a asp-action="Katilimcilar" asp-route-id="@Model.Id"
+                   class="btn btn-outline-primary w-100">
+                    <i class="bi bi-people"></i> Katılımcı Listesi (@doluKontenjan kişi)
+                </a>
+            }
+        </div>
+    </div>
+</div>

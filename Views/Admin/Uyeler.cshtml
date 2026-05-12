@@ -1,0 +1,101 @@
+﻿@model List<DernekYonetim.Models.Uye>
+@{
+    ViewData["Title"] = "Üye Listesi";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-people"></i> Üye Listesi</h4>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Panele Dön
+        </a>
+    </div>
+
+    <!-- ARAMA -->
+    <form method="get" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="arama" value="@ViewBag.Arama"
+                   class="form-control" placeholder="Ad, soyad veya e-posta ara..." />
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i> Ara
+            </button>
+        </div>
+    </form>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Üye No</th>
+                        <th>Ad Soyad</th>
+                        <th>E-posta</th>
+                        <th>Telefon</th>
+                        <th>Durum</th>
+                        <th>Kayıt Tarihi</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var u in Model)
+                    {
+                        <tr>
+                            <td><span class="badge bg-secondary">@u.UyeNo</span></td>
+                            <td>@u.TamAd</td>
+                            <td>@u.Email</td>
+                            <td>@u.Telefon</td>
+                            <td>
+                                @switch (u.UyelikDurumu)
+                                {
+                                    case DernekYonetim.Models.UyelikDurumu.Aktif:
+                                        <span class="badge bg-success">Aktif</span>
+                                        break;
+                                    case DernekYonetim.Models.UyelikDurumu.Pasif:
+                                        <span class="badge bg-secondary">Pasif</span>
+                                        break;
+                                    case DernekYonetim.Models.UyelikDurumu.Askida:
+                                        <span class="badge bg-warning text-dark">Askıda</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-info">Fahri</span>
+                                        break;
+                                }
+                            </td>
+                            <td>@u.UyelikTarihi.ToString("dd.MM.yyyy")</td>
+                            <td>
+                                <a asp-action="UyeDetay" asp-route-id="@u.Id"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-eye"></i> Detay
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                Üye bulunamadı.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- SAYFALAMA -->
+    @if ((int)ViewBag.ToplamSayfa > 1)
+    {
+        <nav class="mt-3">
+            <ul class="pagination justify-content-center">
+                @for (int i = 1; i <= (int)ViewBag.ToplamSayfa; i++)
+                {
+                    <li class="page-item @(i == (int)ViewBag.Sayfa ? "active" : "")">
+                        <a class="page-link" asp-action="Uyeler"
+                           asp-route-sayfa="@i" asp-route-arama="@ViewBag.Arama">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>

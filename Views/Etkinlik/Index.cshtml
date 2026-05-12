@@ -1,0 +1,95 @@
+﻿@model List<DernekYonetim.Models.Etkinlik>
+@{
+    ViewData["Title"] = "Etkinlikler";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-calendar-event"></i> Etkinlikler</h4>
+        @if (User.IsInRole("Admin") || User.IsInRole("Yonetim"))
+        {
+            <a asp-action="Olustur" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-circle"></i> Yeni Etkinlik
+            </a>
+        }
+    </div>
+
+    @if (TempData["Basari"] != null)
+    {
+        <div class="alert alert-success">@TempData["Basari"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-calendar-x" style="font-size:3rem"></i>
+            <p class="mt-2">Henüz etkinlik bulunmuyor.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var e in Model)
+            {
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-primary">@e.Kategori</span>
+                                @if (e.UcretsizMi)
+                                {
+                                    <span class="badge bg-success">Ücretsiz</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        @e.Ucret?.ToString("C", new System.Globalization.CultureInfo("tr-TR"))
+                                    </span>
+                                }
+                            </div>
+                            <h6 class="card-title">@e.Baslik</h6>
+                            <p class="text-muted small mb-1">
+                                <i class="bi bi-calendar3"></i>
+                                @e.BaslangicTarihi.ToString("dd.MM.yyyy HH:mm")
+                            </p>
+                            @if (!string.IsNullOrEmpty(e.Yer))
+                            {
+                                <p class="text-muted small mb-2">
+                                    <i class="bi bi-geo-alt"></i> @e.Yer
+                                </p>
+                            }
+                            @if (e.Kontenjan.HasValue)
+                            {
+                                var dolu = e.Kayitlar.Count(k => k.Durum == DernekYonetim.Models.EtkinlikKayitDurumu.Onaylandi);
+                                <p class="text-muted small mb-2">
+                                    <i class="bi bi-people"></i> @dolu / @e.Kontenjan kişi
+                                </p>
+                            }
+                        </div>
+                        <div class="card-footer bg-transparent d-flex gap-2">
+                            <a asp-action="Detay" asp-route-id="@e.Id"
+                               class="btn btn-outline-primary btn-sm flex-fill">
+                                <i class="bi bi-eye"></i> Detay
+                            </a>
+                            @if (User.IsInRole("Admin") || User.IsInRole("Yonetim"))
+                            {
+                                <a asp-action="Duzenle" asp-route-id="@e.Id"
+                                   class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form asp-action="Sil" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@e.Id" />
+                                    <button type="submit" class="btn btn-outline-danger btn-sm"
+                                            onclick="return confirm('Silmek istediğinizden emin misiniz?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

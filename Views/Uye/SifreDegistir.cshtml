@@ -1,0 +1,53 @@
+﻿@model DernekYonetim.ViewModels.SifreDegistirViewModel
+@{
+    ViewData["Title"] = "Şifre Değiştir";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4><i class="bi bi-lock"></i> Şifre Değiştir</h4>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Panele Dön
+                </a>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="SifreDegistir" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="MevcutSifre" class="form-label">Mevcut Şifre</label>
+                            <input asp-for="MevcutSifre" class="form-control" />
+                            <span asp-validation-for="MevcutSifre" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="YeniSifre" class="form-label">Yeni Şifre</label>
+                            <input asp-for="YeniSifre" class="form-control" />
+                            <span asp-validation-for="YeniSifre" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="YeniSifreTekrar" class="form-label">Yeni Şifre Tekrar</label>
+                            <input asp-for="YeniSifreTekrar" class="form-control" />
+                            <span asp-validation-for="YeniSifreTekrar" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-check-circle"></i> Şifreyi Değiştir
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

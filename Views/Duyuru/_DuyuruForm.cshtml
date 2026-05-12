@@ -1,0 +1,66 @@
+﻿@model DernekYonetim.ViewModels.DuyuruViewModel
+
+<form asp-action="@(Model.Id == 0 ? "Olustur" : "Duzenle")" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+
+    <div class="mb-3">
+        <label asp-for="Baslik" class="form-label">Başlık *</label>
+        <input asp-for="Baslik" class="form-control" />
+        <span asp-validation-for="Baslik" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Ozet" class="form-label">Özet (liste görünümünde gösterilir)</label>
+        <input asp-for="Ozet" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Icerik" class="form-label">İçerik *</label>
+        <textarea asp-for="Icerik" class="form-control" rows="6"></textarea>
+        <span asp-validation-for="Icerik" class="text-danger small"></span>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Hedef" class="form-label">Hedef Kitle</label>
+            <select asp-for="Hedef" class="form-select"
+                    asp-items="Html.GetEnumSelectList<DernekYonetim.Models.DuyuruHedef>()">
+            </select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label d-block">Seçenekler</label>
+            <div class="form-check form-check-inline">
+                <input asp-for="KamuoyunaAcik" class="form-check-input" />
+                <label asp-for="KamuoyunaAcik" class="form-check-label">Kamuoyuna Açık</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input asp-for="Aktif" class="form-check-input" />
+                <label asp-for="Aktif" class="form-check-label">Aktif</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="YayinTarihi" class="form-label">Yayın Tarihi (boş = hemen)</label>
+            <input asp-for="YayinTarihi" type="datetime-local" class="form-control"
+                   value="@Model.YayinTarihi?.ToString("yyyy-MM-ddTHH:mm")" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="BitisTarihi" class="form-label">Bitiş Tarihi (boş = süresiz)</label>
+            <input asp-for="BitisTarihi" type="datetime-local" class="form-control"
+                   value="@Model.BitisTarihi?.ToString("yyyy-MM-ddTHH:mm")" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">
+        <i class="bi bi-save"></i> Kaydet
+    </button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
