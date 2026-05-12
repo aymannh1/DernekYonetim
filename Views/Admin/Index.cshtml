@@ -1,98 +1,100 @@
-﻿@model DernekYonetim.Services.UyeIstatistik
+@model DernekYonetim.Services.UyeIstatistik
 @{
-    ViewData["Title"] = "Admin Paneli";
+    ViewData["Title"] = "Yönetim Paneli";
 }
 
-<div class="container">
-    <h4 class="mb-4"><i class="bi bi-speedometer2"></i> Admin Paneli</h4>
-
-    <!-- İSTATİSTİK KARTLARI -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="small">Toplam Üye</div>
-                            <div class="fs-2 fw-bold">@Model.Toplam</div>
-                        </div>
-                        <i class="bi bi-people fs-1 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-success shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="small">Aktif Üye</div>
-                            <div class="fs-2 fw-bold">@Model.Aktif</div>
-                        </div>
-                        <i class="bi bi-person-check fs-1 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-info shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="small">Bu Ay Yeni</div>
-                            <div class="fs-2 fw-bold">@Model.BuAyYeni</div>
-                        </div>
-                        <i class="bi bi-person-plus fs-1 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-warning shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="small">Bekleyen Başvuru</div>
-                            <div class="fs-2 fw-bold">@Model.BekleyenBasvuru</div>
-                        </div>
-                        <i class="bi bi-hourglass-split fs-1 opacity-50"></i>
-                    </div>
+<!-- Stats -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="stat-icon si-blue"><i class="bi bi-people"></i></div>
+                <div class="stat-content">
+                    <span class="stat-label">Toplam Üye</span>
+                    <span class="stat-value">@Model.Toplam</span>
                 </div>
             </div>
         </div>
     </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="stat-icon si-green"><i class="bi bi-person-check"></i></div>
+                <div class="stat-content">
+                    <span class="stat-label">Aktif Üye</span>
+                    <span class="stat-value">@Model.Aktif</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="stat-icon si-amber"><i class="bi bi-person-plus"></i></div>
+                <div class="stat-content">
+                    <span class="stat-label">Bu Ay Yeni</span>
+                    <span class="stat-value">@Model.BuAyYeni</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="stat-icon si-red"><i class="bi bi-hourglass-split"></i></div>
+                <div class="stat-content">
+                    <span class="stat-label">Bekleyen Başvuru</span>
+                    <span class="stat-value">@Model.BekleyenBasvuru</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <!-- HIZLI ERİŞİM -->
-    <div class="row g-3">
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body text-center p-4">
-                    <i class="bi bi-person-lines-fill fs-1 text-primary mb-3 d-block"></i>
-                    <h6>Üye Yönetimi</h6>
-                    <p class="text-muted small">Üyeleri listele, durum güncelle</p>
-                    <a asp-action="Uyeler" class="btn btn-outline-primary btn-sm">Üyelere Git</a>
+<!-- Quick Actions -->
+<div class="row g-3">
+    <div class="col-md-4">
+        <a asp-action="Uyeler" class="text-decoration-none">
+            <div class="card quick-card">
+                <div class="card-body">
+                    <div class="quick-icon" style="background:var(--primary-light);color:var(--primary)">
+                        <i class="bi bi-person-lines-fill"></i>
+                    </div>
+                    <h6 class="fw-600 mb-1" style="color:var(--text-dark)">Üye Yönetimi</h6>
+                    <p class="text-muted mb-3" style="font-size:13px">Üyeleri listele ve durum güncelle</p>
+                    <span class="btn btn-outline-primary btn-sm">Üyelere Git</span>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body text-center p-4">
-                    <i class="bi bi-clipboard-check fs-1 text-warning mb-3 d-block"></i>
-                    <h6>Başvurular</h6>
-                    <p class="text-muted small">Bekleyen başvuruları incele</p>
-                    <a asp-action="Basvurular" class="btn btn-outline-warning btn-sm">Başvurulara Git</a>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a asp-action="Basvurular" class="text-decoration-none">
+            <div class="card quick-card">
+                <div class="card-body">
+                    <div class="quick-icon" style="background:var(--gold-light);color:var(--gold)">
+                        <i class="bi bi-clipboard-check"></i>
+                    </div>
+                    <h6 class="fw-600 mb-1" style="color:var(--text-dark)">Başvurular</h6>
+                    <p class="text-muted mb-3" style="font-size:13px">Bekleyen başvuruları incele ve onayla</p>
+                    <span class="btn btn-sm" style="background:var(--gold-light);color:var(--gold);border:1px solid var(--gold)">
+                        Başvurulara Git
+                    </span>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body text-center p-4">
-                    <i class="bi bi-cash-stack fs-1 text-success mb-3 d-block"></i>
-                    <h6>Mali İşlemler</h6>
-                    <p class="text-muted small">Gelir/gider takibi</p>
-                    <a href="#" class="btn btn-outline-success btn-sm">Yakında</a>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a asp-controller="Mali" asp-action="Index" class="text-decoration-none">
+            <div class="card quick-card">
+                <div class="card-body">
+                    <div class="quick-icon" style="background:var(--success-light);color:var(--success)">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h6 class="fw-600 mb-1" style="color:var(--text-dark)">Mali İşlemler</h6>
+                    <p class="text-muted mb-3" style="font-size:13px">Gelir, gider ve mali raporlar</p>
+                    <span class="btn btn-outline-success btn-sm">Mali Panele Git</span>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 </div>

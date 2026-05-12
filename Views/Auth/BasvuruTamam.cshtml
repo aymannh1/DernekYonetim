@@ -1,21 +1,36 @@
-﻿@{
+@{
     ViewData["Title"] = "Başvuru Alındı";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-6 text-center">
-            <div class="card shadow-sm">
-                <div class="card-body p-5">
-                    <i class="bi bi-check-circle text-success" style="font-size:3rem"></i>
-                    <h4 class="mt-3">Başvurunuz Alındı!</h4>
-                    <p class="text-muted">
-                        Yönetici incelemesinin ardından e-posta ile bilgilendirileceksiniz.
-                    </p>
-                    <a asp-action="Login" class="btn btn-primary mt-2">Giriş Sayfasına Dön</a>
-                </div>
+<div class="success-wrap">
+    <div class="success-card card">
+        <div class="card-body" style="padding:44px 32px">
+
+            <div class="success-icon-wrap">
+                <i class="bi bi-check-lg"></i>
             </div>
+
+            <h4 class="fw-700 mb-2" style="color:var(--text-dark)">Başvurunuz Alındı!</h4>
+            <p class="text-muted mb-4" style="font-size:14px;line-height:1.65">
+                Üyelik başvurunuz başarıyla gönderildi. Yöneticimiz tarafından
+                incelendikten sonra e-posta ile bilgilendirileceksiniz.
+            </p>
+
+            <div class="alert alert-info mb-4" style="text-align:left">
+                <i class="bi bi-info-circle"></i>
+                <span>Başvurunuzun değerlendirilmesi genellikle <strong>1–3 iş günü</strong> sürmektedir.</span>
+            </div>
+
+            <a asp-action="Login" class="btn btn-primary btn-lg w-100">
+                <i class="bi bi-box-arrow-in-right"></i> Giriş Sayfasına Dön
+            </a>
+
+            <a asp-controller="Home" asp-action="Index"
+               class="btn btn-outline-secondary w-100 mt-2" style="font-size:13.5px">
+                <i class="bi bi-house"></i> Ana Sayfaya Git
+            </a>
+
         </div>
     </div>
 </div>

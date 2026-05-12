@@ -1,165 +1,174 @@
-﻿@{
+@{
     ViewData["Title"] = "Hoş Geldiniz";
-    var duyurular = ViewBag.Duyurular as List<DernekYonetim.Models.Duyuru> ?? new();
+    var duyurular  = ViewBag.Duyurular  as List<DernekYonetim.Models.Duyuru>  ?? new();
     var etkinlikler = ViewBag.Etkinlikler as List<DernekYonetim.Models.Etkinlik> ?? new();
 }
 
-<!-- HERO -->
-<div class="bg-primary text-white py-5">
-    <div class="container text-center">
-        <i class="bi bi-building" style="font-size:4rem"></i>
-        <h1 class="mt-3 fw-bold">Dernek Yönetim Sistemi</h1>
-        <p class="lead mt-2 mb-4">
-            Üye işlemleri, aidat takibi, etkinlik yönetimi ve daha fazlası.
-        </p>
-        <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <a asp-controller="Auth" asp-action="Login"
-               class="btn btn-light btn-lg px-4">
-                <i class="bi bi-person"></i> Giriş Yap
-            </a>
-            <a asp-controller="Auth" asp-action="Basvuru"
-               class="btn btn-outline-light btn-lg px-4">
-                <i class="bi bi-person-plus"></i> Üye Ol
-            </a>
+<!-- ── HERO ── -->
+<section class="hero-section">
+    <div class="container position-relative" style="z-index:1">
+        <div class="text-center">
+            <div class="hero-badge">
+                <i class="bi bi-globe2"></i> HABSİS · HAKİD Yönetim Sistemi
+            </div>
+            <h1 class="hero-title">Habesistan Kalkınma ve<br>İşbirliği Derneği</h1>
+            <p class="hero-subtitle">
+                Üye yönetimi, aidat takibi, etkinlik planlaması ve proje yönetimini
+                tek platformda kolaylıkla yapın.
+            </p>
+            <div class="hero-actions">
+                <a asp-controller="Auth" asp-action="Login" class="btn-hero-primary">
+                    <i class="bi bi-box-arrow-in-right"></i> Sisteme Giriş Yap
+                </a>
+                <a asp-controller="Auth" asp-action="Basvuru" class="btn-hero-secondary">
+                    <i class="bi bi-person-plus"></i> Üyelik Başvurusu
+                </a>
+            </div>
         </div>
     </div>
-</div>
+</section>
 
-<!-- ÖZELLİKLER -->
-<div class="bg-light py-5">
+<!-- ── ÖZELLİKLER ── -->
+<section class="py-5" style="background:#fff">
     <div class="container">
-        <h2 class="text-center fw-bold mb-5">Neler Sunuyoruz?</h2>
-        <div class="row g-4 text-center">
-            <div class="col-md-3">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <i class="bi bi-people text-primary" style="font-size:2.5rem"></i>
-                        <h5 class="mt-3">Üye Yönetimi</h5>
-                        <p class="text-muted small">
-                            Online başvuru, üye takibi ve profil yönetimi.
-                        </p>
-                    </div>
+        <div class="text-center mb-5">
+            <h2 class="fw-700 mb-2" style="font-size:22px;color:var(--text-dark)">Platform Özellikleri</h2>
+            <p class="text-muted" style="font-size:14px">HABSİS ile tüm dernek işlemlerinizi dijital ortamda yönetin.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-sm-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon green"><i class="bi bi-people"></i></div>
+                    <div class="feature-title">Üye Yönetimi</div>
+                    <p class="feature-desc">Online başvuru, üye takibi ve profil yönetimi tek panelde.</p>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <i class="bi bi-cash-stack text-success" style="font-size:2.5rem"></i>
-                        <h5 class="mt-3">Aidat Takibi</h5>
-                        <p class="text-muted small">
-                            Otomatik aidat oluşturma, dekont yükleme ve onay sistemi.
-                        </p>
-                    </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon amber"><i class="bi bi-cash-coin"></i></div>
+                    <div class="feature-title">Aidat Takibi</div>
+                    <p class="feature-desc">Otomatik aidat oluşturma, dekont yükleme ve onay sistemi.</p>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <i class="bi bi-calendar-event text-warning" style="font-size:2.5rem"></i>
-                        <h5 class="mt-3">Etkinlikler</h5>
-                        <p class="text-muted small">
-                            Etkinlik duyurusu, kayıt ve katılımcı takibi.
-                        </p>
-                    </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon blue"><i class="bi bi-calendar-event"></i></div>
+                    <div class="feature-title">Etkinlikler</div>
+                    <p class="feature-desc">Etkinlik duyurusu, online kayıt ve katılımcı takibi.</p>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        <i class="bi bi-megaphone text-danger" style="font-size:2.5rem"></i>
-                        <h5 class="mt-3">Duyurular</h5>
-                        <p class="text-muted small">
-                            Anlık duyuru paylaşımı ve üyelere bildirim.
-                        </p>
-                    </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon red"><i class="bi bi-globe-americas"></i></div>
+                    <div class="feature-title">Proje Takibi</div>
+                    <p class="feature-desc">Habesistan'daki projeleri fotoğraf ve raporlarla takip edin.</p>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<!-- DUYURULAR + ETKİNLİKLER -->
-<div class="container py-5">
-    <div class="row g-4">
+<!-- ── DUYURULAR + ETKİNLİKLER ── -->
+<section class="py-5" style="background:var(--body-bg)">
+    <div class="container">
+        <div class="row g-4">
 
-        <!-- DUYURULAR -->
-        <div class="col-md-6">
-            <h4 class="fw-bold mb-3">
-                <i class="bi bi-megaphone text-primary"></i> Son Duyurular
-            </h4>
-            @if (!duyurular.Any())
-            {
-                <div class="text-muted">Henüz duyuru bulunmuyor.</div>
-            }
-            else
-            {
-                @foreach (var d in duyurular)
+            <!-- DUYURULAR -->
+            <div class="col-lg-6">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="fw-600 mb-0" style="color:var(--text-dark)">
+                        <i class="bi bi-megaphone text-primary me-2"></i>Son Duyurular
+                    </h5>
+                    <a asp-controller="Duyuru" asp-action="Index"
+                       class="text-muted small text-decoration-none">
+                        Tümünü gör <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+
+                @if (!duyurular.Any())
                 {
-                    <div class="card shadow-sm mb-3">
-                        <div class="card-body">
-                            <h6 class="card-title mb-1">@d.Baslik</h6>
-                            <p class="text-muted small mb-2">
-                                <i class="bi bi-clock"></i>
-                                @d.OlusturmaTarihi.ToString("dd.MM.yyyy")
-                            </p>
-                            @if (!string.IsNullOrEmpty(d.Ozet))
-                            {
-                                <p class="card-text small">@d.Ozet</p>
-                            }
-                        </div>
+                    <div class="empty-state">
+                        <i class="bi bi-megaphone"></i>
+                        <p>Henüz duyuru bulunmuyor.</p>
                     </div>
                 }
-            }
-        </div>
-
-        <!-- ETKİNLİKLER -->
-        <div class="col-md-6">
-            <h4 class="fw-bold mb-3">
-                <i class="bi bi-calendar-event text-warning"></i> Yaklaşan Etkinlikler
-            </h4>
-            @if (!etkinlikler.Any())
-            {
-                <div class="text-muted">Yaklaşan etkinlik bulunmuyor.</div>
-            }
-            else
-            {
-                @foreach (var e in etkinlikler)
+                else
                 {
-                    <div class="card shadow-sm mb-3">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <h6 class="card-title mb-1">@e.Baslik</h6>
-                                <span class="badge bg-primary">@e.Kategori</span>
-                            </div>
-                            <p class="text-muted small mb-1">
-                                <i class="bi bi-calendar3"></i>
-                                @e.BaslangicTarihi.ToString("dd.MM.yyyy HH:mm")
-                            </p>
-                            @if (!string.IsNullOrEmpty(e.Yer))
-                            {
-                                <p class="text-muted small mb-0">
-                                    <i class="bi bi-geo-alt"></i> @e.Yer
+                    @foreach (var d in duyurular)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-body" style="padding:16px 18px">
+                                <h6 class="mb-1 fw-600" style="font-size:14px;color:var(--text-dark)">@d.Baslik</h6>
+                                <p class="text-muted mb-2" style="font-size:12px">
+                                    <i class="bi bi-clock me-1"></i>@d.OlusturmaTarihi.ToString("dd.MM.yyyy")
                                 </p>
-                            }
+                                @if (!string.IsNullOrEmpty(d.Ozet))
+                                {
+                                    <p class="mb-0 small text-muted">@d.Ozet</p>
+                                }
+                            </div>
                         </div>
+                    }
+                }
+            </div>
+
+            <!-- ETKİNLİKLER -->
+            <div class="col-lg-6">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="fw-600 mb-0" style="color:var(--text-dark)">
+                        <i class="bi bi-calendar-event text-warning me-2"></i>Yaklaşan Etkinlikler
+                    </h5>
+                    <a asp-controller="Etkinlik" asp-action="Index"
+                       class="text-muted small text-decoration-none">
+                        Tümünü gör <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+
+                @if (!etkinlikler.Any())
+                {
+                    <div class="empty-state">
+                        <i class="bi bi-calendar-x"></i>
+                        <p>Yaklaşan etkinlik bulunmuyor.</p>
                     </div>
                 }
-            }
+                else
+                {
+                    @foreach (var e in etkinlikler)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-body" style="padding:16px 18px">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <h6 class="mb-0 fw-600" style="font-size:14px;color:var(--text-dark)">@e.Baslik</h6>
+                                    <span class="badge bg-primary ms-2">@e.Kategori</span>
+                                </div>
+                                <p class="text-muted mb-1" style="font-size:12px">
+                                    <i class="bi bi-calendar3 me-1"></i>@e.BaslangicTarihi.ToString("dd.MM.yyyy HH:mm")
+                                </p>
+                                @if (!string.IsNullOrEmpty(e.Yer))
+                                {
+                                    <p class="text-muted mb-0" style="font-size:12px">
+                                        <i class="bi bi-geo-alt me-1"></i>@e.Yer
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
         </div>
-
     </div>
-</div>
+</section>
 
-<!-- KAYIT ÇAĞRISI -->
-<div class="bg-primary text-white py-5">
+<!-- ── CTA ── -->
+<section class="cta-strip">
     <div class="container text-center">
-        <h3 class="fw-bold">Siz de Aramıza Katılın!</h3>
-        <p class="lead mt-2 mb-4">
-            Hemen üyelik başvurusunda bulunun, etkinliklerimize katılın.
+        <h3 class="text-white fw-700 mb-2" style="font-size:22px">Siz de Aramıza Katılın!</h3>
+        <p class="mb-4" style="color:rgba(255,255,255,.75);font-size:14.5px">
+            HAKİD üyesi olun, etkinliklerimize katılın ve Habesistan'daki projelerimizi destekleyin.
         </p>
-        <a asp-controller="Auth" asp-action="Basvuru"
-           class="btn btn-light btn-lg px-5">
-            <i class="bi bi-person-plus"></i> Üyelik Başvurusu
+        <a asp-controller="Auth" asp-action="Basvuru" class="btn-hero-primary">
+            <i class="bi bi-person-plus"></i> Üyelik Başvurusu Yap
         </a>
     </div>
-</div>
+</section>

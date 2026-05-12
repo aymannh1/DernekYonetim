@@ -1,54 +1,94 @@
-﻿@model DernekYonetim.ViewModels.LoginViewModel
+@model DernekYonetim.ViewModels.LoginViewModel
 @{
     ViewData["Title"] = "Giriş Yap";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-5">
-            <div class="card shadow-sm">
-                <div class="card-body p-4">
-                    <h4 class="card-title text-center mb-4">
-                        <i class="bi bi-person-circle"></i> Giriş Yap
-                    </h4>
+<div class="login-wrap">
+    <div class="login-card card">
+        <div class="login-card-top">
+            <div class="login-brand-icon">
+                <i class="bi bi-globe2"></i>
+            </div>
+            <h4 class="text-white fw-700 mb-1" style="font-size:20px">HABSİS</h4>
+            <p style="color:rgba(255,255,255,.7);font-size:12.5px;margin:0">
+                Habesistan Kalkınma ve İşbirliği Derneği
+            </p>
+        </div>
 
-                    <form asp-action="Login" method="post">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+        <div class="login-card-body">
+            <h5 class="fw-600 mb-1" style="color:var(--text-dark)">Hoş Geldiniz</h5>
+            <p class="text-muted mb-4" style="font-size:13px">Devam etmek için hesabınıza giriş yapın.</p>
 
-                        <div class="mb-3">
-                            <label asp-for="Email" class="form-label">E-posta</label>
-                            <input asp-for="Email" class="form-control" placeholder="ornek@email.com" />
-                            <span asp-validation-for="Email" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Sifre" class="form-label">Şifre</label>
-                            <input asp-for="Sifre" class="form-control" placeholder="••••••••" />
-                            <span asp-validation-for="Sifre" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-3 form-check">
-                            <input asp-for="BeniHatirla" class="form-check-input" />
-                            <label asp-for="BeniHatirla" class="form-check-label">Beni hatırla</label>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
-                    </form>
-
-                    <hr />
-                    <p class="text-center mb-0 small">
-                        Hesabınız yok mu?
-                        <a asp-action="Basvuru">Üyelik başvurusu yapın</a>
-                    </p>
+            <form asp-action="Login" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <span></span>
                 </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">E-posta Adresi</label>
+                    <div class="input-group">
+                        <span class="input-group-text" style="border:1.5px solid var(--border);background:#F8FAFC">
+                            <i class="bi bi-envelope text-muted"></i>
+                        </span>
+                        <input asp-for="Email" class="form-control" placeholder="ornek@email.com"
+                               style="border-left:none" />
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger" style="font-size:12px"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Sifre" class="form-label">Şifre</label>
+                    <div class="input-group">
+                        <span class="input-group-text" style="border:1.5px solid var(--border);background:#F8FAFC">
+                            <i class="bi bi-lock text-muted"></i>
+                        </span>
+                        <input asp-for="Sifre" class="form-control" placeholder="••••••••"
+                               id="passwordInput" style="border-left:none;border-right:none" />
+                        <button type="button" class="input-group-text"
+                                style="border:1.5px solid var(--border);background:#F8FAFC;cursor:pointer"
+                                onclick="togglePwd()">
+                            <i class="bi bi-eye text-muted" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Sifre" class="text-danger" style="font-size:12px"></span>
+                </div>
+
+                <div class="mb-4 form-check" style="margin-top:-4px">
+                    <input asp-for="BeniHatirla" class="form-check-input" />
+                    <label asp-for="BeniHatirla" class="form-check-label" style="font-size:13px">Beni hatırla</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 btn-lg">
+                    <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+                </button>
+            </form>
+
+            <div class="text-center mt-4 pt-2" style="border-top:1px solid var(--border)">
+                <p class="mb-0 text-muted" style="font-size:13px">
+                    Henüz hesabınız yok mu?
+                    <a asp-action="Basvuru" class="fw-500" style="color:var(--primary)">Üyelik başvurusu yapın</a>
+                </p>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }
+
+<script>
+    function togglePwd() {
+        const input = document.getElementById('passwordInput');
+        const icon  = document.getElementById('eyeIcon');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'bi bi-eye-slash text-muted';
+        } else {
+            input.type = 'password';
+            icon.className = 'bi bi-eye text-muted';
+        }
+    }
+</script>

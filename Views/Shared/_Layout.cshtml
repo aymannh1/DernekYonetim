@@ -1,182 +1,247 @@
-﻿
+@{
+    var ctrl = ViewContext.RouteData.Values["controller"]?.ToString();
+    var act  = ViewContext.RouteData.Values["action"]?.ToString();
+    bool isAuth = User.Identity!.IsAuthenticated;
+
+    string NavClass(string controller, string? action = null) {
+        bool match = ctrl == controller && (action == null || act == action);
+        return match ? "nav-item active" : "nav-item";
+    }
+}
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] — Dernek Yönetim</title>
+    <title>@ViewData["Title"] — HABSİS</title>
 
-    <!-- Bootstrap 5 -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .navbar-brand {
-            font-weight: 600;
-        }
-
-        footer {
-            font-size: 0.85rem;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="dernek-body">
 
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                <i class="bi bi-building"></i> Dernek Yönetim
+<body class="@(isAuth ? "app-body" : "public-body")">
+
+@if (isAuth)
+{
+    /* ── AUTHENTICATED: SIDEBAR LAYOUT ── */
+    <aside class="app-sidebar" id="appSidebar">
+
+        <div class="sidebar-brand">
+            <a class="brand-link" asp-controller="Home" asp-action="Index">
+                <div class="brand-icon"><i class="bi bi-globe2"></i></div>
+                <div>
+                    <span class="brand-name">HABSİS</span>
+                    <span class="brand-sub">HAKİD Yönetim</span>
+                </div>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navMenu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navMenu">
-                <ul class="navbar-nav ms-auto">
-                    @if (User.Identity!.IsAuthenticated)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">
-                                <i class="bi bi-house"></i> Ana Sayfa
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Uye" asp-action="Index">
-                                <i class="bi bi-person-circle"></i> Üye Panelim
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Duyuru" asp-action="Index">
-                                <i class="bi bi-megaphone"></i> Duyurular
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Etkinlik" asp-action="Index">
-                                <i class="bi bi-calendar-event"></i> Etkinlikler
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Aidat" asp-action="Aidatlarim">
-                                <i class="bi bi-cash"></i> Aidatlarım
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Belge" asp-action="Index">
-                                <i class="bi bi-folder2-open"></i> Belgeler
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Proje" asp-action="Index">
-                                <i class="bi bi-globe2"></i> Projeler
-                            </a>
-                        </li>
-                        @if (User.IsInRole("Admin") || User.IsInRole("Yonetim"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="Index">
-                                    <i class="bi bi-speedometer2"></i> Yönetim Paneli
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Aidat" asp-action="Index">
-                                    <i class="bi bi-cash-stack"></i> Aidat Yönetimi
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Duyuru" asp-action="Yonetim">
-                                    <i class="bi bi-megaphone"></i> Duyuru Yönetimi
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Mali" asp-action="Index">
-                                    <i class="bi bi-cash-stack"></i> Mali İşlemler
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="TopluMail">
-                                    <i class="bi bi-envelope-paper"></i> Toplu Mail
-                                </a>
-                            </li>
-                         
-                        }
-                        <li class="nav-item">
-                            <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-link nav-link text-white">
-                                    <i class="bi bi-box-arrow-right"></i> Çıkış
-                                </button>
-                            </form>
-                        </li>
-                   
+        </div>
 
-                    }
-                    else
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Auth" asp-action="Login">
-                                <i class="bi bi-person"></i> Giriş Yap
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Auth" asp-action="Basvuru">
-                                <i class="bi bi-person-plus"></i> Üye Ol
-                            </a>
-                        </li>
-                    }
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <span class="nav-section-label">GENEL</span>
+                <ul class="nav-list">
+                    <li>
+                        <a class="@NavClass("Home")" asp-controller="Home" asp-action="Index">
+                            <i class="bi bi-house-door"></i><span>Ana Sayfa</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="@NavClass("Uye")" asp-controller="Uye" asp-action="Index">
+                            <i class="bi bi-person-circle"></i><span>Üye Panelim</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="@NavClass("Duyuru","Index")" asp-controller="Duyuru" asp-action="Index">
+                            <i class="bi bi-megaphone"></i><span>Duyurular</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="@NavClass("Etkinlik")" asp-controller="Etkinlik" asp-action="Index">
+                            <i class="bi bi-calendar-event"></i><span>Etkinlikler</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="@NavClass("Aidat","Aidatlarim")" asp-controller="Aidat" asp-action="Aidatlarim">
+                            <i class="bi bi-cash-coin"></i><span>Aidatlarım</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="@NavClass("Belge")" asp-controller="Belge" asp-action="Index">
+                            <i class="bi bi-folder2-open"></i><span>Belgeler</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="@NavClass("Proje")" asp-controller="Proje" asp-action="Index">
+                            <i class="bi bi-globe-americas"></i><span>Projeler</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
-        </div>
-    </nav>
 
-    <!-- İÇERİK -->
-    <main class="py-4">
-        @RenderBody()
-    </main>
-    <!-- FOOTER -->
-    <footer class="bg-dark text-white py-4 mt-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h6 class="fw-bold">
-                        <i class="bi bi-building"></i> Dernek Yönetim Sistemi
-                    </h6>
-                    <p class="text-muted small mb-0">
-                        Üye işlemleri, aidat takibi ve etkinlik yönetimi.
-                    </p>
+            @if (User.IsInRole("Admin") || User.IsInRole("Yonetim"))
+            {
+                <div class="nav-section">
+                    <span class="nav-section-label">YÖNETİM</span>
+                    <ul class="nav-list">
+                        <li>
+                            <a class="@NavClass("Admin","Index")" asp-controller="Admin" asp-action="Index">
+                                <i class="bi bi-speedometer2"></i><span>Yönetim Paneli</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="@NavClass("Aidat","Index")" asp-controller="Aidat" asp-action="Index">
+                                <i class="bi bi-cash-stack"></i><span>Aidat Yönetimi</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="@NavClass("Duyuru","Yonetim")" asp-controller="Duyuru" asp-action="Yonetim">
+                                <i class="bi bi-broadcast"></i><span>Duyuru Yönetimi</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="@NavClass("Mali")" asp-controller="Mali" asp-action="Index">
+                                <i class="bi bi-graph-up-arrow"></i><span>Mali İşlemler</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="@NavClass("Admin","TopluMail")" asp-controller="Admin" asp-action="TopluMail">
+                                <i class="bi bi-envelope-paper"></i><span>Toplu Mail</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
+            }
+        </nav>
 
-                <div class="col-md-6 text-md-end">
-                    <a asp-controller="Auth" asp-action="Login"
-                       class="text-white text-decoration-none small me-3">
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="user-avatar"><i class="bi bi-person-fill"></i></div>
+                <div style="min-width:0">
+                    <span class="user-name">@User.Identity.Name?.Split('@')[0]</span>
+                    <span class="user-role">
+                        @if (User.IsInRole("Admin")) { <text>Yönetici</text> }
+                        else if (User.IsInRole("Yonetim")) { <text>Yönetim</text> }
+                        else { <text>Üye</text> }
+                    </span>
+                </div>
+            </div>
+            <form asp-controller="Auth" asp-action="Logout" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-logout" title="Çıkış Yap">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="app-main">
+        <header class="app-header">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="header-title">
+                <h1 class="page-title">@(ViewData["Title"] ?? "HABSİS")</h1>
+            </div>
+            <div class="header-actions">
+                <a class="header-btn" asp-controller="Duyuru" asp-action="Index" title="Duyurular">
+                    <i class="bi bi-bell"></i>
+                </a>
+                <a class="header-btn" asp-controller="Uye" asp-action="Index" title="Profilim">
+                    <i class="bi bi-person-circle"></i>
+                </a>
+            </div>
+        </header>
+
+        <main class="app-content">
+            @RenderBody()
+        </main>
+
+        <footer class="app-footer">
+            <span>© @DateTime.Now.Year HABSİS</span>
+            <span class="footer-sep">·</span>
+            <span>Habesistan Kalkınma ve İşbirliği Derneği</span>
+            <span class="footer-sep">·</span>
+            <span>Tüm hakları saklıdır.</span>
+        </footer>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+}
+else
+{
+    /* ── PUBLIC: TOP NAV LAYOUT ── */
+    <nav class="public-nav">
+        <div class="container">
+            <div class="nav-inner">
+                <a class="pub-brand" asp-controller="Home" asp-action="Index">
+                    <div class="pub-brand-icon"><i class="bi bi-globe2"></i></div>
+                    <div>
+                        <span class="pub-brand-name">HABSİS</span>
+                        <span class="pub-brand-sub">HAKİD Yönetim Sistemi</span>
+                    </div>
+                </a>
+                <div class="pub-nav-actions">
+                    <a class="pub-nav-btn" asp-controller="Auth" asp-action="Login">
                         <i class="bi bi-person"></i> Giriş Yap
                     </a>
-
-                    <a asp-controller="Auth" asp-action="Basvuru"
-                       class="text-white text-decoration-none small">
+                    <a class="pub-nav-btn pub-nav-btn-primary" asp-controller="Auth" asp-action="Basvuru">
                         <i class="bi bi-person-plus"></i> Üye Ol
                     </a>
                 </div>
             </div>
+        </div>
+    </nav>
 
-            <hr class="border-secondary mt-3 mb-2" />
+    <main class="public-content">
+        @RenderBody()
+    </main>
 
-            <div class="text-center text-muted small">
-                © @DateTime.Now.Year Dernek Yönetim Sistemi. Tüm hakları saklıdır.
+    <footer class="public-footer">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-7">
+                    <div class="footer-brand-wrap">
+                        <div class="footer-brand-icon"><i class="bi bi-globe2"></i></div>
+                        <div>
+                            <span class="footer-brand-name">HABSİS</span>
+                            <span class="footer-brand-desc">Habesistan Kalkınma ve İşbirliği Derneği Yönetim Sistemi</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                    <a class="footer-link" asp-controller="Auth" asp-action="Login">Giriş Yap</a>
+                    <a class="footer-link ms-4" asp-controller="Auth" asp-action="Basvuru">Üye Ol</a>
+                </div>
+            </div>
+            <hr class="footer-divider" />
+            <div class="text-center small" style="color:#475569">
+                © @DateTime.Now.Year HABSİS · Habesistan Kalkınma ve İşbirliği Derneği. Tüm hakları saklıdır.
             </div>
         </div>
     </footer>
+}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Sidebar toggle
+    const sidebar  = document.getElementById('appSidebar');
+    const overlay  = document.getElementById('sidebarOverlay');
+    const toggler  = document.getElementById('sidebarToggle');
 
-    @await RenderSectionAsync("Scripts", required: false)
+    function openSidebar()  { sidebar?.classList.add('open');  overlay?.classList.add('show'); }
+    function closeSidebar() { sidebar?.classList.remove('open'); overlay?.classList.remove('show'); }
 
+    toggler?.addEventListener('click', () => {
+        sidebar?.classList.contains('open') ? closeSidebar() : openSidebar();
+    });
+    overlay?.addEventListener('click', closeSidebar);
+</script>
+
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,78 +1,94 @@
-﻿@model DernekYonetim.ViewModels.BasvuruViewModel
+@model DernekYonetim.ViewModels.BasvuruViewModel
 @{
     ViewData["Title"] = "Üyelik Başvurusu";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container">
-    <div class="row justify-content-center mt-4">
-        <div class="col-md-7">
-            <div class="card shadow-sm">
-                <div class="card-body p-4">
-                    <h4 class="card-title text-center mb-4">
-                        <i class="bi bi-person-plus"></i> Üyelik Başvurusu
-                    </h4>
+<div class="py-5" style="background:linear-gradient(140deg,#F0F9F4 0%,#EEF2FF 100%);min-height:calc(100vh - 62px)">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-xl-6">
 
-                    <form asp-action="Basvuru" method="post">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width:56px;height:56px;background:linear-gradient(135deg,var(--primary),var(--gold));border-radius:var(--radius);color:#fff;font-size:24px">
+                        <i class="bi bi-person-plus"></i>
+                    </div>
+                    <h3 class="fw-700 mb-1" style="color:var(--text-dark);font-size:20px">Üyelik Başvurusu</h3>
+                    <p class="text-muted" style="font-size:13.5px">HAKİD ailesine katılmak için aşağıdaki formu doldurun.</p>
+                </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Ad" class="form-label">Ad *</label>
-                                <input asp-for="Ad" class="form-control" />
-                                <span asp-validation-for="Ad" class="text-danger small"></span>
+                <div class="card" style="border-radius:var(--radius-lg)">
+                    <div class="card-body" style="padding:28px">
+
+                        <form asp-action="Basvuru" method="post">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
+                                <i class="bi bi-exclamation-circle"></i><span></span>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Soyad" class="form-label">Soyad *</label>
-                                <input asp-for="Soyad" class="form-control" />
-                                <span asp-validation-for="Soyad" class="text-danger small"></span>
+
+                            <div class="row g-3">
+                                <div class="col-sm-6">
+                                    <label asp-for="Ad" class="form-label">Ad <span class="text-danger">*</span></label>
+                                    <input asp-for="Ad" class="form-control" placeholder="Adınız" />
+                                    <span asp-validation-for="Ad" class="text-danger" style="font-size:12px"></span>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label asp-for="Soyad" class="form-label">Soyad <span class="text-danger">*</span></label>
+                                    <input asp-for="Soyad" class="form-control" placeholder="Soyadınız" />
+                                    <span asp-validation-for="Soyad" class="text-danger" style="font-size:12px"></span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Email" class="form-label">E-posta *</label>
-                            <input asp-for="Email" class="form-control" />
-                            <span asp-validation-for="Email" class="text-danger small"></span>
-                        </div>
+                            <div class="mt-3">
+                                <label asp-for="Email" class="form-label">E-posta <span class="text-danger">*</span></label>
+                                <input asp-for="Email" class="form-control" placeholder="ornek@email.com" />
+                                <span asp-validation-for="Email" class="text-danger" style="font-size:12px"></span>
+                            </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Telefon" class="form-label">Telefon *</label>
-                            <input asp-for="Telefon" class="form-control" placeholder="05XX XXX XX XX" />
-                            <span asp-validation-for="Telefon" class="text-danger small"></span>
-                        </div>
+                            <div class="mt-3">
+                                <label asp-for="Telefon" class="form-label">Telefon <span class="text-danger">*</span></label>
+                                <input asp-for="Telefon" class="form-control" placeholder="05XX XXX XX XX" />
+                                <span asp-validation-for="Telefon" class="text-danger" style="font-size:12px"></span>
+                            </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Meslek" class="form-label">Meslek</label>
-                            <input asp-for="Meslek" class="form-control" />
-                        </div>
+                            <div class="mt-3">
+                                <label asp-for="Meslek" class="form-label">Meslek</label>
+                                <input asp-for="Meslek" class="form-control" placeholder="Mesleğiniz" />
+                            </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Adres" class="form-label">Adres</label>
-                            <textarea asp-for="Adres" class="form-control" rows="2"></textarea>
-                        </div>
+                            <div class="mt-3">
+                                <label asp-for="Adres" class="form-label">Adres</label>
+                                <textarea asp-for="Adres" class="form-control" rows="2"
+                                          placeholder="İkamet adresiniz"></textarea>
+                            </div>
 
-                        <div class="mb-3">
-                            <label asp-for="BasvuruNotu" class="form-label">Başvuru Notu</label>
-                            <textarea asp-for="BasvuruNotu" class="form-control" rows="3"
-                                      placeholder="Neden üye olmak istiyorsunuz?"></textarea>
-                        </div>
+                            <div class="mt-3">
+                                <label asp-for="BasvuruNotu" class="form-label">Başvuru Notu</label>
+                                <textarea asp-for="BasvuruNotu" class="form-control" rows="3"
+                                          placeholder="Neden üye olmak istiyorsunuz?"></textarea>
+                            </div>
 
-                        <button type="submit" class="btn btn-success w-100">Başvuru Gönder</button>
-                    </form>
+                            <button type="submit" class="btn btn-primary w-100 btn-lg mt-4">
+                                <i class="bi bi-send"></i> Başvuru Gönder
+                            </button>
+                        </form>
 
-                    <hr />
-                    <p class="text-center mb-0 small">
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <p class="text-muted mb-0" style="font-size:13px">
                         Zaten hesabınız var mı?
-                        <a asp-action="Login">Giriş yapın</a>
+                        <a asp-action="Login" style="color:var(--primary);font-weight:500">Giriş yapın</a>
                     </p>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }
