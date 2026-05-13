@@ -49,13 +49,46 @@ namespace DernekYonetim.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BasvuruOnayla(int id)
         {
+            var basvuru = await _db.Basvurular.FindAsync(id);
+            if (basvuru == null)
+            {
+                TempData["Hata"] = "Başvuru bulunamadı.";
+                return RedirectToAction("Basvurular");
+            }
+
             var adminId = _userManager.GetUserId(User)!;
             var sonuc = await _uyeService.BasvuruOnaylaAsync(id, adminId);
 
             if (sonuc.Succeeded)
+            {
                 TempData["Basari"] = "Başvuru onaylandı, üye hesabı oluşturuldu.";
+
+                var geciciSifre = $"Dernek@{DateTime.UtcNow.Year}!";
+                var adSoyad = $"{basvuru.Ad} {basvuru.Soyad}";
+                var icerik = $@"
+<div style='font-family:sans-serif;max-width:560px;margin:auto'>
+  <h2 style='color:#1B6B40'>HABSİS – Üyeliğiniz Onaylandı</h2>
+  <p>Sayın <strong>{adSoyad}</strong>,</p>
+  <p>HAKİD – Habesistan Kalkınma ve İşbirliği Derneği üyelik başvurunuz onaylanmıştır.</p>
+  <p>Sisteme aşağıdaki bilgilerle giriş yapabilirsiniz:</p>
+  <table style='border-collapse:collapse;width:100%'>
+    <tr><td style='padding:8px;font-weight:bold'>E-posta</td><td style='padding:8px'>{basvuru.Email}</td></tr>
+    <tr style='background:#f5f5f5'><td style='padding:8px;font-weight:bold'>Geçici Şifre</td><td style='padding:8px'><code>{geciciSifre}</code></td></tr>
+  </table>
+  <p style='margin-top:16px;color:#666'>İlk girişinizden sonra şifrenizi değiştirmenizi öneririz.</p>
+  <a href='https://habsis.onrender.com/Auth/Login'
+     style='display:inline-block;margin-top:12px;padding:10px 24px;background:#1B6B40;color:#fff;text-decoration:none;border-radius:6px'>
+    Giriş Yap
+  </a>
+</div>";
+
+                await _emailService.GonderAsync(basvuru.Email, adSoyad,
+                    "HABSİS – Üyeliğiniz Onaylandı", icerik);
+            }
             else
+            {
                 TempData["Hata"] = string.Join(", ", sonuc.Errors.Select(e => e.Description));
+            }
 
             return RedirectToAction("Basvurular");
         }
