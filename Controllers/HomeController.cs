@@ -1,5 +1,6 @@
 ﻿using DernekYonetim.Data;
 using DernekYonetim.Models;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,14 @@ namespace DernekYonetim.Controllers
         public HomeController(AppDbContext db)
         {
             _db = db;
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            var feature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+            ViewBag.Message = feature?.Error?.Message ?? "Beklenmeyen bir hata oluştu.";
+            return View();
         }
 
         public async Task<IActionResult> Index()

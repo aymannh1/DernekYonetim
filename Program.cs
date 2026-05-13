@@ -4,6 +4,9 @@ using DernekYonetim.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+// Allow DateTime.Now / DateTime with Kind=Unspecified to be written to PostgreSQL timestamptz columns
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ══════════════════════════════════════════════════════
