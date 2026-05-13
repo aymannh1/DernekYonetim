@@ -3,6 +3,7 @@
     name: habsis
     env: docker
     plan: free
+    branch: master
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production

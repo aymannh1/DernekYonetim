@@ -118,13 +118,14 @@ namespace DernekYonetim.Services
         // ── Dashboard istatistikleri ───────────────────────────────────
         public async Task<UyeIstatistik> IstatistikGetirAsync()
         {
-            var now = DateTime.UtcNow;
-            var ayBasi = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+            var year = DateTime.UtcNow.Year;
+            var month = DateTime.UtcNow.Month;
             return new UyeIstatistik
             {
                 Toplam = await _db.Users.CountAsync(),
                 Aktif = await _db.Users.CountAsync(u => u.UyelikDurumu == UyelikDurumu.Aktif),
-                BuAyYeni = await _db.Users.CountAsync(u => u.UyelikTarihi >= ayBasi),
+                BuAyYeni = await _db.Users.CountAsync(u =>
+                    u.UyelikTarihi.Year == year && u.UyelikTarihi.Month == month),
                 BekleyenBasvuru = await _db.Basvurular.CountAsync(b => b.Durum == BasvuruDurumu.Bekliyor)
             };
         }
