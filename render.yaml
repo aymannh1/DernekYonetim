@@ -1,0 +1,18 @@
+﻿services:
+  - type: web
+    name: habsis
+    env: docker
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        fromDatabase:
+          name: habsis-db
+          property: connectionString
+
+databases:
+  - name: habsis-db
+    plan: free
+    databaseName: habsis
+    user: habsis

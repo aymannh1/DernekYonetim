@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // 1. VERİTABANI
 // ══════════════════════════════════════════════════════
 builder.Services.AddDbContext<AppDbContext>(opts =>
-    opts.UseSqlServer(
+    opts.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         sql => sql.EnableRetryOnFailure(3)
     ));
