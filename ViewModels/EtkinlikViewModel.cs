@@ -18,10 +18,10 @@ namespace DernekYonetim.ViewModels
         public string? Yer { get; set; }
 
         [Required(ErrorMessage = "Başlangıç tarihi zorunludur")]
-        public DateTime BaslangicTarihi { get; set; } = DateTime.Now;
+        public DateTime BaslangicTarihi { get; set; } = DateTime.UtcNow;
 
         [Required(ErrorMessage = "Bitiş tarihi zorunludur")]
-        public DateTime BitisTarihi { get; set; } = DateTime.Now.AddHours(2);
+        public DateTime BitisTarihi { get; set; } = DateTime.UtcNow.AddHours(2);
 
         public int? Kontenjan { get; set; }
         public bool UcretsizMi { get; set; } = true;

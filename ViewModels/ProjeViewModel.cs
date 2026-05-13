@@ -28,7 +28,7 @@ namespace DernekYonetim.ViewModels
         public ProjeDurumu Durum { get; set; } = ProjeDurumu.Planlandi;
 
         [Required(ErrorMessage = "Başlangıç tarihi zorunludur")]
-        public DateTime BaslangicTarihi { get; set; } = DateTime.Now;
+        public DateTime BaslangicTarihi { get; set; } = DateTime.UtcNow;
 
         public DateTime? BitisTarihi { get; set; }
         public IFormFile? KapakFoto { get; set; }

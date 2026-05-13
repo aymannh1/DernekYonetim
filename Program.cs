@@ -3,9 +3,7 @@ using DernekYonetim.Models;
 using DernekYonetim.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
-// Allow DateTime.Now / DateTime with Kind=Unspecified to be written to PostgreSQL timestamptz columns
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,8 +27,13 @@ static string ResolveConnectionString(string? raw)
 var connectionString = ResolveConnectionString(
     builder.Configuration.GetConnectionString("DefaultConnection"));
 
+// Use NpgsqlDataSourceBuilder so legacy timestamp behavior applies to all DateTime parameters
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+dataSourceBuilder.EnableLegacyTimestampBehavior();
+var npgsqlDataSource = dataSourceBuilder.Build();
+
 builder.Services.AddDbContext<AppDbContext>(opts =>
-    opts.UseNpgsql(connectionString, sql => sql.EnableRetryOnFailure(3)));
+    opts.UseNpgsql(npgsqlDataSource, sql => sql.EnableRetryOnFailure(3)));
 
 // ══════════════════════════════════════════════════════
 // 2. IDENTITY

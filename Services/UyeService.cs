@@ -22,7 +22,7 @@ namespace DernekYonetim.Services
         public async Task<string> UyeNoUretAsync()
         {
             var prefix = _cfg["AppSettings:UyeNoPrefix"] ?? "UYE";
-            var yil = DateTime.Now.Year;
+            var yil = DateTime.UtcNow.Year;
             var sayi = await _db.Users
                              .CountAsync(u => u.UyeNo.StartsWith($"{prefix}-{yil}-"));
             return $"{prefix}-{yil}-{(sayi + 1):D4}";
@@ -90,7 +90,7 @@ namespace DernekYonetim.Services
             };
 
             // Geçici şifre – üye ilk girişte değiştirecek
-            var geciciSifre = $"Dernek@{DateTime.Now.Year}!";
+            var geciciSifre = $"Dernek@{DateTime.UtcNow.Year}!";
             var sonuc = await _userManager.CreateAsync(uye, geciciSifre);
 
             if (sonuc.Succeeded)
@@ -118,7 +118,8 @@ namespace DernekYonetim.Services
         // ── Dashboard istatistikleri ───────────────────────────────────
         public async Task<UyeIstatistik> IstatistikGetirAsync()
         {
-            var ayBasi = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var now = DateTime.UtcNow;
+            var ayBasi = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
             return new UyeIstatistik
             {
                 Toplam = await _db.Users.CountAsync(),

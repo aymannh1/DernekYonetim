@@ -19,6 +19,6 @@ namespace DernekYonetim.ViewModels
         public decimal Tutar { get; set; }
 
         [Required(ErrorMessage = "Tarih zorunludur")]
-        public DateTime IslemTarihi { get; set; } = DateTime.Now;
+        public DateTime IslemTarihi { get; set; } = DateTime.UtcNow;
     }
 }

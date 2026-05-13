@@ -23,7 +23,7 @@ namespace DernekYonetim.Controllers
         // ── GET /Mali/Index ───────────────────────────────────────────
         public async Task<IActionResult> Index(int? yil, MaliHareketTuru? tur)
         {
-            var seciliYil = yil ?? DateTime.Now.Year;
+            var seciliYil = yil ?? DateTime.UtcNow.Year;
 
             var q = _db.MaliHareketler
                 .Include(m => m.KaydEden)
@@ -102,7 +102,7 @@ namespace DernekYonetim.Controllers
         // ── GET /Mali/Rapor ───────────────────────────────────────────
         public async Task<IActionResult> Rapor()
         {
-            var yil = DateTime.Now.Year;
+            var yil = DateTime.UtcNow.Year;
 
             var aylikRapor = await _db.MaliHareketler
                 .Where(m => m.IslemTarihi.Year == yil)
