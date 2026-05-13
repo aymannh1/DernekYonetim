@@ -9,11 +9,24 @@ var builder = WebApplication.CreateBuilder(args);
 // ══════════════════════════════════════════════════════
 // 1. VERİTABANI
 // ══════════════════════════════════════════════════════
+
+// Convert postgres:// URL (Render format) to Npgsql key=value format
+static string ResolveConnectionString(string? raw)
+{
+    if (string.IsNullOrEmpty(raw)) return "";
+    if (!raw.StartsWith("postgres://") && !raw.StartsWith("postgresql://")) return raw;
+    var uri = new Uri(raw);
+    var parts = uri.UserInfo.Split(':', 2);
+    return $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};" +
+           $"Username={parts[0]};Password={Uri.UnescapeDataString(parts[1])};" +
+           $"SSL Mode=Require;Trust Server Certificate=true";
+}
+
+var connectionString = ResolveConnectionString(
+    builder.Configuration.GetConnectionString("DefaultConnection"));
+
 builder.Services.AddDbContext<AppDbContext>(opts =>
-    opts.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        sql => sql.EnableRetryOnFailure(3)
-    ));
+    opts.UseNpgsql(connectionString, sql => sql.EnableRetryOnFailure(3)));
 
 // ══════════════════════════════════════════════════════
 // 2. IDENTITY
