@@ -17,7 +17,8 @@ static string ResolveConnectionString(string? raw)
     if (!raw.StartsWith("postgres://") && !raw.StartsWith("postgresql://")) return raw;
     var uri = new Uri(raw);
     var parts = uri.UserInfo.Split(':', 2);
-    return $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};" +
+    var port = uri.Port == -1 ? 5432 : uri.Port;
+    return $"Host={uri.Host};Port={port};Database={uri.AbsolutePath.TrimStart('/')};" +
            $"Username={parts[0]};Password={Uri.UnescapeDataString(parts[1])};" +
            $"SSL Mode=Require;Trust Server Certificate=true";
 }
