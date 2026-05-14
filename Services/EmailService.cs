@@ -1,5 +1,6 @@
-using System.Net;
-using System.Net.Mail;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 
 namespace DernekYonetim.Services
 {
@@ -20,32 +21,27 @@ namespace DernekYonetim.Services
         {
             try
             {
-                var host = _cfg["EmailSettings:SmtpHost"]!;
-                var port = int.Parse(_cfg["EmailSettings:SmtpPort"]!);
-                var kullanici = _cfg["EmailSettings:KullaniciAdi"]!;
-                var sifre = _cfg["EmailSettings:Sifre"]!;
-                var gonderenAd = _cfg["EmailSettings:GonderenAdi"]!;
+                var host          = _cfg["EmailSettings:SmtpHost"]!;
+                var port          = int.Parse(_cfg["EmailSettings:SmtpPort"]!);
+                var kullanici     = _cfg["EmailSettings:KullaniciAdi"]!;
+                var sifre         = _cfg["EmailSettings:Sifre"]!;
+                var gonderenAd    = _cfg["EmailSettings:GonderenAdi"]!;
                 var gonderenEmail = _cfg["EmailSettings:GonderenEmail"]!;
 
-                var mesaj = new MailMessage
-                {
-                    From = new MailAddress(gonderenEmail, gonderenAd),
-                    Subject = konu,
-                    Body = icerik,
-                    IsBodyHtml = true
-                };
-                mesaj.To.Add(new MailAddress(aliciEmail, aliciAd));
+                var mesaj = new MimeMessage();
+                mesaj.From.Add(new MailboxAddress(gonderenAd, gonderenEmail));
+                mesaj.To.Add(new MailboxAddress(aliciAd, aliciEmail));
+                mesaj.Subject = konu;
+                mesaj.Body = new TextPart("html") { Text = icerik };
 
-                using var smtp = new SmtpClient(host, port)
-                {
-                    Credentials = new NetworkCredential(kullanici, sifre),
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    Timeout = 20000
-                };
+                using var smtp = new SmtpClient();
+                using var cts  = new CancellationTokenSource(TimeSpan.FromSeconds(25));
 
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
-                await smtp.SendMailAsync(mesaj, cts.Token);
+                await smtp.ConnectAsync(host, port, SecureSocketOptions.StartTls, cts.Token);
+                await smtp.AuthenticateAsync(kullanici, sifre, cts.Token);
+                await smtp.SendAsync(mesaj, cts.Token);
+                await smtp.DisconnectAsync(true, cts.Token);
+
                 return true;
             }
             catch
