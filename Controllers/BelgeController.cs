@@ -50,8 +50,14 @@ namespace DernekYonetim.Controllers
         public async Task<IActionResult> Indir(int id)
         {
             var belge = await _db.Belgeler.FindAsync(id);
-            if (belge == null || belge.DosyaIcerigi == null)
+            if (belge == null)
                 return NotFound();
+
+            if (belge.DosyaIcerigi == null)
+            {
+                TempData["Hata"] = $"'{belge.Baslik}' belgesi yeniden yüklenmelidir — eski dosya artık sunucuda mevcut değil.";
+                return RedirectToAction("Index");
+            }
 
             if (belge.ErisimSeviyesi == BelgeErisim.SadeceYonetim
                 && !User.IsInRole("Admin") && !User.IsInRole("Yonetim"))

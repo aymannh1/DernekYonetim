@@ -19,6 +19,12 @@
                     <i class="bi bi-check-circle"></i> @TempData["Basari"]
                 </div>
             }
+            @if (TempData["Hata"] != null)
+            {
+                <div class="alert alert-danger">
+                    <i class="bi bi-x-circle"></i> @TempData["Hata"]
+                </div>
+            }
 
             <div class="card shadow-sm">
                 <div class="card-body p-4">

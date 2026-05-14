@@ -178,7 +178,13 @@ namespace DernekYonetim.Controllers
             var (basarili, basarisiz) = await _emailService.TopluGonderAsync(
                 alicilar, model.Konu, model.Icerik);
 
-            TempData["Basari"] = $"Mail gönderildi: {basarili} başarılı, {basarisiz} başarısız.";
+            if (basarili > 0)
+                TempData["Basari"] = $"Mail gönderildi: {basarili} başarılı, {basarisiz} başarısız.";
+            else
+                TempData["Hata"] = $"Hiçbir mail gönderilemedi ({basarisiz} başarısız). " +
+                    "Render loglarında 'Mail gönderilemedi' satırını kontrol edin — " +
+                    "Gmail App Şifresi geçersiz veya süresi dolmuş olabilir.";
+
             return RedirectToAction("TopluMail");
         }
     }

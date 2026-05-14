@@ -7,10 +7,12 @@ namespace DernekYonetim.Services
     public class EmailService
     {
         private readonly IConfiguration _cfg;
+        private readonly ILogger<EmailService> _log;
 
-        public EmailService(IConfiguration cfg)
+        public EmailService(IConfiguration cfg, ILogger<EmailService> log)
         {
             _cfg = cfg;
+            _log = log;
         }
 
         public async Task<bool> GonderAsync(
@@ -44,8 +46,9 @@ namespace DernekYonetim.Services
 
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                _log.LogError("Mail gönderilemedi [{Email}]: {Error}", aliciEmail, ex.Message);
                 return false;
             }
         }
