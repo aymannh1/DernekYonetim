@@ -22,7 +22,7 @@ namespace DernekYonetim.Services
 
             if (sadeceyayinda)
                 q = q.Where(e => e.Durum == EtkinlikDurumu.Yayinda
-                              && e.BaslangicTarihi >= DateTime.UtcNow);
+                              && e.BitisTarihi >= DateTime.UtcNow);
 
             return await q.OrderBy(e => e.BaslangicTarihi).ToListAsync();
         }

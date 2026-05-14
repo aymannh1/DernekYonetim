@@ -1,0 +1,89 @@
+@model DernekYonetim.ViewModels.MaliHareketViewModel
+@{
+    ViewData["Title"] = "Yeni Mali Hareket";
+    var kultur = new System.Globalization.CultureInfo("tr-TR");
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4><i class="bi bi-plus-circle"></i> Yeni Mali Hareket</h4>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Geri
+                </a>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="Ekle" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Tur" class="form-label">Tür *</label>
+                                <select asp-for="Tur" class="form-select">
+                                    <option value="Gelir">Gelir</option>
+                                    <option value="Gider">Gider</option>
+                                </select>
+                                <span asp-validation-for="Tur" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="IslemTarihi" class="form-label">İşlem Tarihi *</label>
+                                <input asp-for="IslemTarihi" type="date" class="form-control"
+                                       value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="IslemTarihi" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Kategori" class="form-label">Kategori *</label>
+                            <input asp-for="Kategori" class="form-control"
+                                   list="kategoriList"
+                                   placeholder="Aidat, Kira, Etkinlik, Malzeme..." />
+                            <datalist id="kategoriList">
+                                <option value="Aidat Geliri" />
+                                <option value="Bağış" />
+                                <option value="Etkinlik Geliri" />
+                                <option value="Kira" />
+                                <option value="Malzeme" />
+                                <option value="Fatura" />
+                                <option value="Personel" />
+                                <option value="Diğer" />
+                            </datalist>
+                            <span asp-validation-for="Kategori" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Aciklama" class="form-label">Açıklama *</label>
+                            <input asp-for="Aciklama" class="form-control"
+                                   placeholder="İşlem açıklaması" />
+                            <span asp-validation-for="Aciklama" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Tutar" class="form-label">Tutar (₺) *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₺</span>
+                                <input asp-for="Tutar" type="number" step="0.01" min="0.01"
+                                       class="form-control" placeholder="0.00" />
+                            </div>
+                            <span asp-validation-for="Tutar" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-save"></i> Kaydet
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

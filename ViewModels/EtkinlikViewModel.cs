@@ -26,6 +26,6 @@ namespace DernekYonetim.ViewModels
         public int? Kontenjan { get; set; }
         public bool UcretsizMi { get; set; } = true;
         public decimal? Ucret { get; set; }
-        public EtkinlikDurumu Durum { get; set; } = EtkinlikDurumu.Taslak;
+        public EtkinlikDurumu Durum { get; set; } = EtkinlikDurumu.Yayinda;
     }
 }
