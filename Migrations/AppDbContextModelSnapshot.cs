@@ -162,6 +162,9 @@ namespace DernekYonetim.Migrations
                     b.Property<long>("DosyaBoyutu")
                         .HasColumnType("bigint");
 
+                    b.Property<byte[]>("DosyaIcerigi")
+                        .HasColumnType("bytea");
+
                     b.Property<string>("DosyaTipi")
                         .IsRequired()
                         .HasColumnType("text");

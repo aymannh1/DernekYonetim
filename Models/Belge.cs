@@ -7,6 +7,7 @@
         public string? Aciklama { get; set; }
         public string Kategori { get; set; } = string.Empty;    // Tüzük, Yönetmelik, Tutanak, Form
         public string DosyaYolu { get; set; } = string.Empty;
+        public byte[]? DosyaIcerigi { get; set; }
         public string DosyaAdi { get; set; } = string.Empty;
         public string DosyaTipi { get; set; } = string.Empty;   // pdf, docx, xlsx
         public long DosyaBoyutu { get; set; }

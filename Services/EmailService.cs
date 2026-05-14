@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Mail;
 
 namespace DernekYonetim.Services
@@ -40,10 +40,12 @@ namespace DernekYonetim.Services
                 {
                     Credentials = new NetworkCredential(kullanici, sifre),
                     EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    Timeout = 20000
                 };
 
-                await smtp.SendMailAsync(mesaj);
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+                await smtp.SendMailAsync(mesaj, cts.Token);
                 return true;
             }
             catch
@@ -61,12 +63,13 @@ namespace DernekYonetim.Services
 
             foreach (var (email, ad) in alicilar)
             {
+                if (string.IsNullOrWhiteSpace(email)) { basarisiz++; continue; }
+
                 var sonuc = await GonderAsync(email, ad, konu, icerik);
                 if (sonuc) basarili++;
                 else basarisiz++;
 
-                // Rate limit için kısa bekleme
-                await Task.Delay(200);
+                await Task.Delay(100);
             }
 
             return (basarili, basarisiz);

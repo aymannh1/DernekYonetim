@@ -1,4 +1,4 @@
-﻿using DernekYonetim.Data;
+using DernekYonetim.Data;
 using DernekYonetim.Models;
 using DernekYonetim.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -13,13 +13,11 @@ namespace DernekYonetim.Controllers
     {
         private readonly AppDbContext _db;
         private readonly UserManager<Uye> _userManager;
-        private readonly IWebHostEnvironment _env;
 
-        public BelgeController(AppDbContext db, UserManager<Uye> userManager, IWebHostEnvironment env)
+        public BelgeController(AppDbContext db, UserManager<Uye> userManager)
         {
             _db = db;
             _userManager = userManager;
-            _env = env;
         }
 
         // ── GET /Belge/Index ──────────────────────────────────────────
@@ -29,7 +27,6 @@ namespace DernekYonetim.Controllers
                 .Include(b => b.Yukleyen)
                 .AsQueryable();
 
-            // Erişim kontrolü
             if (!User.IsInRole("Admin") && !User.IsInRole("Yonetim"))
                 q = q.Where(b => b.ErisimSeviyesi != BelgeErisim.SadeceYonetim);
 
@@ -47,6 +44,32 @@ namespace DernekYonetim.Controllers
             ViewBag.Kategoriler = kategoriler;
 
             return View(liste);
+        }
+
+        // ── GET /Belge/Indir/5 ────────────────────────────────────────
+        public async Task<IActionResult> Indir(int id)
+        {
+            var belge = await _db.Belgeler.FindAsync(id);
+            if (belge == null || belge.DosyaIcerigi == null)
+                return NotFound();
+
+            if (belge.ErisimSeviyesi == BelgeErisim.SadeceYonetim
+                && !User.IsInRole("Admin") && !User.IsInRole("Yonetim"))
+                return Forbid();
+
+            var contentType = belge.DosyaTipi switch
+            {
+                "pdf"  => "application/pdf",
+                "jpg" or "jpeg" => "image/jpeg",
+                "png"  => "image/png",
+                "docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "doc"  => "application/msword",
+                "xls"  => "application/vnd.ms-excel",
+                _      => "application/octet-stream"
+            };
+
+            return File(belge.DosyaIcerigi, contentType, belge.DosyaAdi);
         }
 
         // ── GET /Belge/Yukle ──────────────────────────────────────────
@@ -70,25 +93,21 @@ namespace DernekYonetim.Controllers
                 return View(model);
             }
 
-            // Dosyayı kaydet
-            var klasor = Path.Combine(_env.WebRootPath, "uploads", "belgeler");
-            Directory.CreateDirectory(klasor);
+            using var ms = new MemoryStream();
+            await model.Dosya.CopyToAsync(ms);
+            var icerik = ms.ToArray();
 
-            var uzanti = Path.GetExtension(model.Dosya.FileName).ToLower();
-            var dosyaAdi = $"{Guid.NewGuid()}{uzanti}";
-            var yol = Path.Combine(klasor, dosyaAdi);
-
-            using var stream = new FileStream(yol, FileMode.Create);
-            await model.Dosya.CopyToAsync(stream);
+            var uzanti = Path.GetExtension(model.Dosya.FileName).ToLower().TrimStart('.');
 
             var belge = new Belge
             {
                 Baslik = model.Baslik,
                 Aciklama = model.Aciklama,
                 Kategori = model.Kategori,
-                DosyaYolu = $"/uploads/belgeler/{dosyaAdi}",
+                DosyaYolu = string.Empty,
+                DosyaIcerigi = icerik,
                 DosyaAdi = model.Dosya.FileName,
-                DosyaTipi = uzanti.TrimStart('.'),
+                DosyaTipi = uzanti,
                 DosyaBoyutu = model.Dosya.Length,
                 ErisimSeviyesi = model.ErisimSeviyesi,
                 YukleyenId = _userManager.GetUserId(User)!,
@@ -111,11 +130,6 @@ namespace DernekYonetim.Controllers
             var belge = await _db.Belgeler.FindAsync(id);
             if (belge != null)
             {
-                // Fiziksel dosyayı sil
-                var fizikselYol = Path.Combine(_env.WebRootPath, belge.DosyaYolu.TrimStart('/'));
-                if (System.IO.File.Exists(fizikselYol))
-                    System.IO.File.Delete(fizikselYol);
-
                 _db.Belgeler.Remove(belge);
                 await _db.SaveChangesAsync();
             }
