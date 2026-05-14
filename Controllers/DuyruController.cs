@@ -66,8 +66,8 @@ namespace DernekYonetim.Controllers
                 Ozet = model.Ozet,
                 Hedef = model.Hedef,
                 KamuoyunaAcik = model.KamuoyunaAcik,
-                YayinTarihi = model.YayinTarihi,
-                BitisTarihi = model.BitisTarihi,
+                YayinTarihi = model.YayinTarihi.HasValue ? DateTime.SpecifyKind(model.YayinTarihi.Value, DateTimeKind.Utc) : (DateTime?)null,
+                BitisTarihi = model.BitisTarihi.HasValue ? DateTime.SpecifyKind(model.BitisTarihi.Value, DateTimeKind.Utc) : (DateTime?)null,
                 Aktif = true,
                 OlusturanId = _userManager.GetUserId(User)!,
                 OlusturmaTarihi = DateTime.UtcNow
@@ -118,8 +118,8 @@ namespace DernekYonetim.Controllers
             duyuru.Ozet = model.Ozet;
             duyuru.Hedef = model.Hedef;
             duyuru.KamuoyunaAcik = model.KamuoyunaAcik;
-            duyuru.YayinTarihi = model.YayinTarihi;
-            duyuru.BitisTarihi = model.BitisTarihi;
+            duyuru.YayinTarihi = model.YayinTarihi.HasValue ? DateTime.SpecifyKind(model.YayinTarihi.Value, DateTimeKind.Utc) : (DateTime?)null;
+            duyuru.BitisTarihi = model.BitisTarihi.HasValue ? DateTime.SpecifyKind(model.BitisTarihi.Value, DateTimeKind.Utc) : (DateTime?)null;
             duyuru.Aktif = model.Aktif;
 
             await _db.SaveChangesAsync();

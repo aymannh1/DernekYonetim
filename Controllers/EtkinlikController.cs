@@ -87,8 +87,8 @@ namespace DernekYonetim.Controllers
                 Aciklama = model.Aciklama,
                 Kategori = model.Kategori,
                 Yer = model.Yer,
-                BaslangicTarihi = model.BaslangicTarihi,
-                BitisTarihi = model.BitisTarihi,
+                BaslangicTarihi = DateTime.SpecifyKind(model.BaslangicTarihi, DateTimeKind.Utc),
+                BitisTarihi = DateTime.SpecifyKind(model.BitisTarihi, DateTimeKind.Utc),
                 Kontenjan = model.Kontenjan,
                 UcretsizMi = model.UcretsizMi,
                 Ucret = model.UcretsizMi ? null : model.Ucret,
@@ -141,8 +141,8 @@ namespace DernekYonetim.Controllers
             etkinlik.Aciklama = model.Aciklama;
             etkinlik.Kategori = model.Kategori;
             etkinlik.Yer = model.Yer;
-            etkinlik.BaslangicTarihi = model.BaslangicTarihi;
-            etkinlik.BitisTarihi = model.BitisTarihi;
+            etkinlik.BaslangicTarihi = DateTime.SpecifyKind(model.BaslangicTarihi, DateTimeKind.Utc);
+            etkinlik.BitisTarihi = DateTime.SpecifyKind(model.BitisTarihi, DateTimeKind.Utc);
             etkinlik.Kontenjan = model.Kontenjan;
             etkinlik.UcretsizMi = model.UcretsizMi;
             etkinlik.Ucret = model.UcretsizMi ? null : model.Ucret;

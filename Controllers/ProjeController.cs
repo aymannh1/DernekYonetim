@@ -88,8 +88,8 @@ namespace DernekYonetim.Controllers
                 HedefBütce = model.HedefButce,
                 ToplamBagis = model.ToplamBagis,
                 Durum = model.Durum,
-                BaslangicTarihi = model.BaslangicTarihi,
-                BitisTarihi = model.BitisTarihi,
+                BaslangicTarihi = DateTime.SpecifyKind(model.BaslangicTarihi, DateTimeKind.Utc),
+                BitisTarihi = model.BitisTarihi.HasValue ? DateTime.SpecifyKind(model.BitisTarihi.Value, DateTimeKind.Utc) : (DateTime?)null,
                 KapakFotoUrl = kapakUrl,
                 OlusturanId = _userManager.GetUserId(User)!,
                 OlusturmaTarihi = DateTime.UtcNow
@@ -150,8 +150,8 @@ namespace DernekYonetim.Controllers
             proje.HedefBütce = model.HedefButce;
             proje.ToplamBagis = model.ToplamBagis;
             proje.Durum = model.Durum;
-            proje.BaslangicTarihi = model.BaslangicTarihi;
-            proje.BitisTarihi = model.BitisTarihi;
+            proje.BaslangicTarihi = DateTime.SpecifyKind(model.BaslangicTarihi, DateTimeKind.Utc);
+            proje.BitisTarihi = model.BitisTarihi.HasValue ? DateTime.SpecifyKind(model.BitisTarihi.Value, DateTimeKind.Utc) : (DateTime?)null;
 
             await _db.SaveChangesAsync();
             TempData["Basari"] = "Proje güncellendi.";

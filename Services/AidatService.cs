@@ -17,6 +17,8 @@ namespace DernekYonetim.Services
         public async Task<int> TopluAidatOlusturAsync(
             string donem, decimal tutar, DateTime sonOdemeTarihi)
         {
+            var sonOdemeTarihiUtc = DateTime.SpecifyKind(sonOdemeTarihi, DateTimeKind.Utc);
+
             var aktifUyeler = await _db.Users
                 .Where(u => u.UyelikDurumu == UyelikDurumu.Aktif)
                 .ToListAsync();
@@ -24,7 +26,6 @@ namespace DernekYonetim.Services
             int sayac = 0;
             foreach (var uye in aktifUyeler)
             {
-                // Aynı dönem için zaten kayıt var mı?
                 var mevcutMu = await _db.Aidatlar
                     .AnyAsync(a => a.UyeId == uye.Id && a.Donem == donem);
 
@@ -35,7 +36,7 @@ namespace DernekYonetim.Services
                         UyeId = uye.Id,
                         Donem = donem,
                         Tutar = tutar,
-                        SonOdemeTarihi = sonOdemeTarihi,
+                        SonOdemeTarihi = sonOdemeTarihiUtc,
                         OdemeDurumu = OdemeDurumu.Bekliyor,
                         OlusturmaTarihi = DateTime.UtcNow
                     });

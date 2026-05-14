@@ -72,7 +72,7 @@ namespace DernekYonetim.Controllers
                 Kategori = model.Kategori,
                 Aciklama = model.Aciklama,
                 Tutar = model.Tutar,
-                IslemTarihi = model.IslemTarihi,
+                IslemTarihi = DateTime.SpecifyKind(model.IslemTarihi, DateTimeKind.Utc),
                 KaydEdenId = _userManager.GetUserId(User)!,
                 OlusturmaTarihi = DateTime.UtcNow
             };
