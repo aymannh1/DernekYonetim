@@ -1,3 +1,6 @@
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<DernekYonetim.Models.Uye> LayoutUserManager
+@inject DernekYonetim.Services.BildirimService LayoutBildirimService
 @{
     var ctrl = ViewContext.RouteData.Values["controller"]?.ToString();
     var act  = ViewContext.RouteData.Values["action"]?.ToString();
@@ -6,6 +9,14 @@
     string NavClass(string controller, string? action = null) {
         bool match = ctrl == controller && (action == null || act == action);
         return match ? "nav-item active" : "nav-item";
+    }
+
+    int okunmamisSayi = 0;
+    if (isAuth)
+    {
+        var layoutUserId = LayoutUserManager.GetUserId(User);
+        if (layoutUserId != null)
+            okunmamisSayi = await LayoutBildirimService.OkunmamisSayiAsync(layoutUserId);
     }
 }
 <!DOCTYPE html>
@@ -80,6 +91,15 @@
                             <i class="bi bi-globe-americas"></i><span>Projeler</span>
                         </a>
                     </li>
+                    <li>
+                        <a class="@NavClass("Bildirim") position-relative" asp-controller="Bildirim" asp-action="Index">
+                            <i class="bi bi-bell"></i><span>Bildirimlerim</span>
+                            @if (okunmamisSayi > 0)
+                            {
+                                <span class="badge bg-danger rounded-pill ms-auto">@(okunmamisSayi > 99 ? "99+" : okunmamisSayi.ToString())</span>
+                            }
+                        </a>
+                    </li>
                 </ul>
             </div>
 
@@ -110,7 +130,7 @@
                         </li>
                         <li>
                             <a class="@NavClass("Admin","TopluMail")" asp-controller="Admin" asp-action="TopluMail">
-                                <i class="bi bi-envelope-paper"></i><span>Toplu Mail</span>
+                                <i class="bi bi-send"></i><span>Toplu Mesaj</span>
                             </a>
                         </li>
                     </ul>
@@ -148,8 +168,15 @@
                 <h1 class="page-title">@(ViewData["Title"] ?? "HABSİS")</h1>
             </div>
             <div class="header-actions">
-                <a class="header-btn" asp-controller="Duyuru" asp-action="Index" title="Duyurular">
+                <a class="header-btn position-relative" asp-controller="Bildirim" asp-action="Index" title="Bildirimler">
                     <i class="bi bi-bell"></i>
+                    @if (okunmamisSayi > 0)
+                    {
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                              style="font-size:0.6rem">
+                            @(okunmamisSayi > 99 ? "99+" : okunmamisSayi.ToString())
+                        </span>
+                    }
                 </a>
                 <a class="header-btn" asp-controller="Uye" asp-action="Index" title="Profilim">
                     <i class="bi bi-person-circle"></i>

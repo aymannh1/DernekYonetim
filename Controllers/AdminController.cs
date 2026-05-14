@@ -14,18 +14,18 @@ namespace DernekYonetim.Controllers
         private readonly AppDbContext _db;
         private readonly UserManager<Uye> _userManager;
         private readonly UyeService _uyeService;
-        private readonly EmailService _emailService;
+        private readonly BildirimService _bildirimService;
 
         public AdminController(
             AppDbContext db,
             UserManager<Uye> userManager,
             UyeService uyeService,
-            EmailService emailService)
+            BildirimService bildirimService)
         {
             _db = db;
             _userManager = userManager;
             _uyeService = uyeService;
-            _emailService = emailService;
+            _bildirimService = bildirimService;
         }
 
         // ── GET /Admin/Index ──────────────────────────────────────────
@@ -64,26 +64,18 @@ namespace DernekYonetim.Controllers
                 TempData["Basari"] = "Başvuru onaylandı, üye hesabı oluşturuldu.";
 
                 var geciciSifre = $"Dernek@{DateTime.UtcNow.Year}!";
-                var adSoyad = $"{basvuru.Ad} {basvuru.Soyad}";
-                var icerik = $@"
-<div style='font-family:sans-serif;max-width:560px;margin:auto'>
-  <h2 style='color:#1B6B40'>HABSİS – Üyeliğiniz Onaylandı</h2>
-  <p>Sayın <strong>{adSoyad}</strong>,</p>
-  <p>HAKİD – Habesistan Kalkınma ve İşbirliği Derneği üyelik başvurunuz onaylanmıştır.</p>
-  <p>Sisteme aşağıdaki bilgilerle giriş yapabilirsiniz:</p>
-  <table style='border-collapse:collapse;width:100%'>
-    <tr><td style='padding:8px;font-weight:bold'>E-posta</td><td style='padding:8px'>{basvuru.Email}</td></tr>
-    <tr style='background:#f5f5f5'><td style='padding:8px;font-weight:bold'>Geçici Şifre</td><td style='padding:8px'><code>{geciciSifre}</code></td></tr>
-  </table>
-  <p style='margin-top:16px;color:#666'>İlk girişinizden sonra şifrenizi değiştirmenizi öneririz.</p>
-  <a href='https://habsis.onrender.com/Auth/Login'
-     style='display:inline-block;margin-top:12px;padding:10px 24px;background:#1B6B40;color:#fff;text-decoration:none;border-radius:6px'>
-    Giriş Yap
-  </a>
-</div>";
-
-                await _emailService.GonderAsync(basvuru.Email, adSoyad,
-                    "HABSİS – Üyeliğiniz Onaylandı", icerik);
+                var yeniUye = await _userManager.FindByEmailAsync(basvuru.Email);
+                if (yeniUye != null)
+                {
+                    await _bildirimService.EkleAsync(
+                        yeniUye.Id,
+                        "Üyeliğiniz Onaylandı",
+                        $"Sayın {basvuru.Ad} {basvuru.Soyad}, HAKİD üyelik başvurunuz onaylandı. " +
+                        $"Sisteme e-posta adresiniz ve geçici şifreniz '{geciciSifre}' ile giriş yapabilirsiniz. " +
+                        "İlk girişinizden sonra şifrenizi değiştirmenizi öneririz.",
+                        BildirimTuru.Basvuru,
+                        "/Auth/Login");
+                }
             }
             else
             {
@@ -152,7 +144,6 @@ namespace DernekYonetim.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            // Hedef üyeleri belirle
             var q = _db.Users.AsQueryable();
 
             if (model.Hedef == "Aktif")
@@ -166,24 +157,15 @@ namespace DernekYonetim.Controllers
                 q = q.Where(u => gecikmiUyeIdler.Contains(u.Id));
             }
 
-            var uyeler = await q
-                .Where(u => u.Email != null)
-                .Select(u => new { u.Email, u.Ad, u.Soyad })
-                .ToListAsync();
+            var uyeIdler = await q.Select(u => u.Id).ToListAsync();
 
-            var alicilar = uyeler
-                .Select(u => (u.Email!, $"{u.Ad} {u.Soyad}"))
-                .ToList();
-
-            var (basarili, basarisiz) = await _emailService.TopluGonderAsync(
-                alicilar, model.Konu, model.Icerik);
+            var (basarili, _) = await _bildirimService.TopluEkleAsync(
+                uyeIdler, model.Konu, model.Icerik, BildirimTuru.Genel);
 
             if (basarili > 0)
-                TempData["Basari"] = $"Mail gönderildi: {basarili} başarılı, {basarisiz} başarısız.";
+                TempData["Basari"] = $"Mesaj gönderildi: {basarili} üyeye bildirim oluşturuldu.";
             else
-                TempData["Hata"] = $"Hiçbir mail gönderilemedi ({basarisiz} başarısız). " +
-                    "Render loglarında 'Mail gönderilemedi' satırını kontrol edin — " +
-                    "Gmail App Şifresi geçersiz veya süresi dolmuş olabilir.";
+                TempData["Hata"] = "Seçilen grupta üye bulunamadı.";
 
             return RedirectToAction("TopluMail");
         }
