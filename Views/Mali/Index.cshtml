@@ -65,10 +65,8 @@
         <div class="col-md-3">
             <select name="tur" class="form-select">
                 <option value="">-- Tüm Türler --</option>
-                @foreach (var t in Enum.GetValues<DernekYonetim.Models.MaliHareketTuru>())
-                {
-                    <option value="@t">@t</option>
-                }
+                <option value="Gelir" selected="@(ViewBag.SeciliTur?.ToString() == "Gelir")">Gelir</option>
+                <option value="Gider" selected="@(ViewBag.SeciliTur?.ToString() == "Gider")">Gider</option>
             </select>
         </div>
         <div class="col-md-2">

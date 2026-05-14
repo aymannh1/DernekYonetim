@@ -1,74 +1,101 @@
-﻿@{
+@{
     ViewData["Title"] = "Mali Rapor";
     var kultur = new System.Globalization.CultureInfo("tr-TR");
-    var aylikRapor = ViewBag.AylikRapor as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
+    var aylikRapor = (ViewBag.AylikRapor as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>()).ToList();
+    decimal toplamGelir = (decimal)ViewBag.ToplamGelir;
+    decimal toplamGider = (decimal)ViewBag.ToplamGider;
+    decimal netBakiye   = toplamGelir - toplamGider;
 }
 
-<div class="container">
+<div class="container-xl">
+
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4><i class="bi bi-bar-chart"></i> Mali Rapor — @ViewBag.Yil</h4>
+        <div>
+            <h4 class="mb-0 fw-bold"><i class="bi bi-graph-up-arrow text-success me-2"></i>Mali Rapor</h4>
+            <span class="text-muted small">@ViewBag.Yil yılı gelir-gider özeti</span>
+        </div>
         <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
             <i class="bi bi-arrow-left"></i> Geri
         </a>
     </div>
 
-    <!-- ÖZET -->
+    <!-- ÖZET KARTLAR -->
     <div class="row g-3 mb-4">
         <div class="col-md-4">
-            <div class="card text-white bg-success shadow-sm">
-                <div class="card-body text-center">
-                    <div class="small">Yıllık Toplam Gelir</div>
-                    <div class="fs-3 fw-bold">
-                        @((decimal)ViewBag.ToplamGelir).ToString("C", kultur)
-                    </div>
-                </div>
+            <div class="rapor-kart rapor-kart--gelir">
+                <div class="rapor-kart__label"><i class="bi bi-arrow-down-circle-fill"></i> Toplam Gelir</div>
+                <div class="rapor-kart__tutar">@toplamGelir.ToString("C", kultur)</div>
+                <div class="rapor-kart__yil">@ViewBag.Yil</div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-white bg-danger shadow-sm">
-                <div class="card-body text-center">
-                    <div class="small">Yıllık Toplam Gider</div>
-                    <div class="fs-3 fw-bold">
-                        @((decimal)ViewBag.ToplamGider).ToString("C", kultur)
-                    </div>
-                </div>
+            <div class="rapor-kart rapor-kart--gider">
+                <div class="rapor-kart__label"><i class="bi bi-arrow-up-circle-fill"></i> Toplam Gider</div>
+                <div class="rapor-kart__tutar">@toplamGider.ToString("C", kultur)</div>
+                <div class="rapor-kart__yil">@ViewBag.Yil</div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-white bg-primary shadow-sm">
-                <div class="card-body text-center">
-                    <div class="small">Net Bakiye</div>
-                    <div class="fs-3 fw-bold">
-                        @(((decimal)ViewBag.ToplamGelir - (decimal)ViewBag.ToplamGider).ToString("C", kultur))
-                    </div>
-                </div>
+            <div class="rapor-kart @(netBakiye >= 0 ? "rapor-kart--pozitif" : "rapor-kart--negatif")">
+                <div class="rapor-kart__label"><i class="bi bi-wallet2"></i> Net Bakiye</div>
+                <div class="rapor-kart__tutar">@netBakiye.ToString("C", kultur)</div>
+                <div class="rapor-kart__yil">@(netBakiye >= 0 ? "Kâr" : "Zarar")</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+            <h6 class="text-muted fw-semibold mb-3 text-uppercase ls-1">Aylık Gelir / Gider</h6>
+            <div style="position:relative;height:280px">
+                <canvas id="aylikChart"></canvas>
             </div>
         </div>
     </div>
 
     <!-- AYLIK TABLO -->
-    <div class="card shadow-sm">
-        <div class="card-header"><strong>Aylık Özet</strong></div>
+    @{
+        decimal maks = aylikRapor.Any()
+            ? aylikRapor.Max(a => Math.Max((decimal)a.Gelir, (decimal)a.Gider))
+            : 1m;
+        if (maks <= 0) maks = 1m;
+    }
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-transparent border-bottom py-3">
+            <strong>Aylık Özet Tablosu</strong>
+        </div>
         <div class="card-body p-0">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>Ay</th>
-                        <th class="text-success">Gelir</th>
-                        <th class="text-danger">Gider</th>
-                        <th>Net</th>
+                        <th class="text-end text-success">Gelir</th>
+                        <th class="text-end text-danger">Gider</th>
+                        <th class="text-end">Net</th>
+                        <th style="width:200px">Oran</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var ay in aylikRapor)
                     {
-                        decimal net = (decimal)ay.Gelir - (decimal)ay.Gider;
+                        decimal gelir = (decimal)ay.Gelir;
+                        decimal gider = (decimal)ay.Gider;
+                        decimal net   = gelir - gider;
+                        int gelirBar  = (int)(gelir / maks * 100);
+                        int giderBar  = (int)(gider / maks * 100);
                         <tr>
                             <td><strong>@ay.AyAdi</strong></td>
-                            <td class="text-success">@((decimal)ay.Gelir).ToString("C", kultur)</td>
-                            <td class="text-danger">@((decimal)ay.Gider).ToString("C", kultur)</td>
-                            <td class="fw-bold @(net >= 0 ? "text-primary" : "text-warning")">
+                            <td class="text-end text-success fw-semibold">@gelir.ToString("C", kultur)</td>
+                            <td class="text-end text-danger fw-semibold">@gider.ToString("C", kultur)</td>
+                            <td class="text-end fw-bold @(net >= 0 ? "text-success" : "text-danger")">
                                 @net.ToString("C", kultur)
+                            </td>
+                            <td>
+                                <div class="mini-bar-wrap">
+                                    <div class="mini-bar mini-bar--gelir" style="width:@(gelirBar)%"></div>
+                                    <div class="mini-bar mini-bar--gider" style="width:@(giderBar)%"></div>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -77,3 +104,91 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+    var labels  = [@Html.Raw(string.Join(",", aylikRapor.Select(a => $"\"{a.AyAdi}\"")))];
+    var gelirler = [@Html.Raw(string.Join(",", aylikRapor.Select(a => ((decimal)a.Gelir).ToString(System.Globalization.CultureInfo.InvariantCulture))))];
+    var giderler = [@Html.Raw(string.Join(",", aylikRapor.Select(a => ((decimal)a.Gider).ToString(System.Globalization.CultureInfo.InvariantCulture))))];
+
+    new Chart(document.getElementById('aylikChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Gelir',
+                    data: gelirler,
+                    backgroundColor: 'rgba(22,163,74,0.8)',
+                    borderRadius: 6,
+                    borderSkipped: false
+                },
+                {
+                    label: 'Gider',
+                    data: giderler,
+                    backgroundColor: 'rgba(220,38,38,0.75)',
+                    borderRadius: 6,
+                    borderSkipped: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top' },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            return ' ' + ctx.dataset.label + ': ₺' + ctx.parsed.y.toLocaleString('tr-TR', {minimumFractionDigits:2});
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(v) { return '₺' + v.toLocaleString('tr-TR'); }
+                    },
+                    grid: { color: 'rgba(0,0,0,0.05)' }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+})();
+</script>
+}
+
+<style>
+.rapor-kart {
+    border-radius: 14px;
+    padding: 1.4rem 1.6rem;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+.rapor-kart::after {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+}
+.rapor-kart--gelir   { background: linear-gradient(135deg,#16a34a,#15803d); }
+.rapor-kart--gider   { background: linear-gradient(135deg,#dc2626,#b91c1c); }
+.rapor-kart--pozitif { background: linear-gradient(135deg,#0284c7,#0369a1); }
+.rapor-kart--negatif { background: linear-gradient(135deg,#d97706,#b45309); }
+.rapor-kart__label   { font-size: .8rem; opacity: .85; margin-bottom: .3rem; }
+.rapor-kart__tutar   { font-size: 1.75rem; font-weight: 700; letter-spacing: -.5px; }
+.rapor-kart__yil     { font-size: .75rem; opacity: .7; margin-top: .2rem; }
+.ls-1 { letter-spacing: .05em; }
+.mini-bar-wrap { display:flex; flex-direction:column; gap:2px; }
+.mini-bar { height: 5px; border-radius: 4px; transition: width .4s; }
+.mini-bar--gelir { background: #16a34a; }
+.mini-bar--gider { background: #dc2626; }
+</style>

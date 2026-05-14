@@ -18,14 +18,21 @@
     <div class="row">
         <div class="col-md-6 mb-3">
             <label asp-for="Kategori" class="form-label">Kategori *</label>
-            <select asp-for="Kategori" class="form-select"
-                    asp-items="Html.GetEnumSelectList<DernekYonetim.Models.EtkinlikKategori>()">
+            <select asp-for="Kategori" class="form-select">
+                <option value="Seminer"  selected="@(Model.Kategori == DernekYonetim.Models.EtkinlikKategori.Seminer)">Seminer</option>
+                <option value="Toplanti" selected="@(Model.Kategori == DernekYonetim.Models.EtkinlikKategori.Toplanti)">Toplantı</option>
+                <option value="Sosyal"   selected="@(Model.Kategori == DernekYonetim.Models.EtkinlikKategori.Sosyal)">Sosyal</option>
+                <option value="Spor"     selected="@(Model.Kategori == DernekYonetim.Models.EtkinlikKategori.Spor)">Spor</option>
+                <option value="Egitim"   selected="@(Model.Kategori == DernekYonetim.Models.EtkinlikKategori.Egitim)">Eğitim</option>
             </select>
         </div>
         <div class="col-md-6 mb-3">
             <label asp-for="Durum" class="form-label">Durum</label>
-            <select asp-for="Durum" class="form-select"
-                    asp-items="Html.GetEnumSelectList<DernekYonetim.Models.EtkinlikDurumu>()">
+            <select asp-for="Durum" class="form-select">
+                <option value="Taslak"     selected="@(Model.Durum == DernekYonetim.Models.EtkinlikDurumu.Taslak)">Taslak</option>
+                <option value="Yayinda"    selected="@(Model.Durum == DernekYonetim.Models.EtkinlikDurumu.Yayinda)">Yayında</option>
+                <option value="Iptal"      selected="@(Model.Durum == DernekYonetim.Models.EtkinlikDurumu.Iptal)">İptal</option>
+                <option value="Tamamlandi" selected="@(Model.Durum == DernekYonetim.Models.EtkinlikDurumu.Tamamlandi)">Tamamlandı</option>
             </select>
         </div>
     </div>

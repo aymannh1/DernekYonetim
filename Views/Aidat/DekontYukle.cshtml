@@ -27,8 +27,11 @@
 
                         <div class="mb-3">
                             <label asp-for="OdemeYontemi" class="form-label">Ödeme Yöntemi *</label>
-                            <select asp-for="OdemeYontemi" class="form-select"
-                                    asp-items="Html.GetEnumSelectList<DernekYonetim.Models.OdemeYontemi>()">
+                            <select asp-for="OdemeYontemi" class="form-select">
+                                <option value="Nakit"      selected="@(Model.OdemeYontemi == DernekYonetim.Models.OdemeYontemi.Nakit)">Nakit</option>
+                                <option value="KrediKarti" selected="@(Model.OdemeYontemi == DernekYonetim.Models.OdemeYontemi.KrediKarti)">Kredi Kartı</option>
+                                <option value="HavaleEft"  selected="@(Model.OdemeYontemi == DernekYonetim.Models.OdemeYontemi.HavaleEft)">Havale / EFT</option>
+                                <option value="Online"     selected="@(Model.OdemeYontemi == DernekYonetim.Models.OdemeYontemi.Online)">Online</option>
                             </select>
                         </div>
 

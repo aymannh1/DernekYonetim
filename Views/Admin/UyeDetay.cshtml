@@ -61,10 +61,10 @@
                         <input type="hidden" name="id" value="@Model.Id" />
                         <div class="mb-3">
                             <select name="durum" class="form-select">
-                                @foreach (var d in Enum.GetValues<DernekYonetim.Models.UyelikDurumu>())
-                                {
-                                    <option value="@d" selected="@(Model.UyelikDurumu == d)">@d</option>
-                                }
+                                <option value="Aktif"  selected="@(Model.UyelikDurumu == DernekYonetim.Models.UyelikDurumu.Aktif)">Aktif</option>
+                                <option value="Pasif"  selected="@(Model.UyelikDurumu == DernekYonetim.Models.UyelikDurumu.Pasif)">Pasif</option>
+                                <option value="Askida" selected="@(Model.UyelikDurumu == DernekYonetim.Models.UyelikDurumu.Askida)">Askıda</option>
+                                <option value="Fahri"  selected="@(Model.UyelikDurumu == DernekYonetim.Models.UyelikDurumu.Fahri)">Fahri Üye</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Güncelle</button>

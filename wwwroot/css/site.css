@@ -5,21 +5,21 @@
 
 /* ---- DESIGN TOKENS ---- */
 :root {
-  --primary:        #1B6B40;
-  --primary-dark:   #134E2E;
-  --primary-light:  #E6F4ED;
-  --primary-rgb:    27, 107, 64;
+  --primary:        #059669;
+  --primary-dark:   #047857;
+  --primary-light:  #ECFDF5;
+  --primary-rgb:    5, 150, 105;
 
-  --gold:           #C8971D;
-  --gold-light:     #FEF7E6;
+  --gold:           #F59E0B;
+  --gold-light:     #FFFBEB;
 
-  --sidebar-bg:     #0D1B2A;
-  --sidebar-hover:  #162840;
+  --sidebar-bg:     #0A1628;
+  --sidebar-hover:  #142035;
   --sidebar-text:   #94A3B8;
   --sidebar-width:  258px;
 
   --header-height:  60px;
-  --body-bg:        #F1F5F9;
+  --body-bg:        #F0F4F8;
   --card-bg:        #FFFFFF;
   --border:         #E2E8F0;
 
@@ -27,8 +27,8 @@
   --text-body:      #334155;
   --text-muted:     #64748B;
 
-  --success:        #16A34A;
-  --success-light:  #DCFCE7;
+  --success:        #059669;
+  --success-light:  #D1FAE5;
   --warning:        #D97706;
   --warning-light:  #FEF3C7;
   --danger:         #DC2626;
@@ -39,7 +39,7 @@
   --shadow-xs:  0 1px 2px rgba(0,0,0,.05);
   --shadow-sm:  0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
   --shadow-md:  0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.05);
-  --shadow-lg:  0 10px 25px rgba(0,0,0,.10), 0 4px 6px rgba(0,0,0,.06);
+  --shadow-lg:  0 10px 28px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
 
   --radius-sm: 6px;
   --radius:    10px;
@@ -85,7 +85,8 @@ a:hover { color: var(--primary-dark); }
 .app-sidebar {
   width: var(--sidebar-width);
   min-width: var(--sidebar-width);
-  background: var(--sidebar-bg);
+  background: linear-gradient(180deg, #0C1E35 0%, #0A1628 60%, #071120 100%);
+  border-right: 1px solid rgba(255,255,255,.04);
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -210,10 +211,11 @@ a:hover { color: var(--primary-dark); }
 .nav-item:hover i { opacity: 1; }
 
 .nav-item.active {
-  background: rgba(27,107,64,.18);
+  background: rgba(5,150,105,.2);
   color: #6EE7B7;
   border-left-color: var(--primary);
   font-weight: 600;
+  box-shadow: inset 0 0 12px rgba(5,150,105,.08);
 }
 
 .nav-item.active i { color: #6EE7B7; opacity: 1; }
@@ -1054,3 +1056,86 @@ a:hover { color: var(--primary-dark); }
 .text-primary    { color: var(--primary) !important; }
 .bg-primary-soft { background: var(--primary-light) !important; }
 .gap-2 { gap: .5rem; }
+
+/* =============================================
+   GRADIENT STAT CARD OVERRIDES
+   (Bootstrap bg-success / bg-danger / etc.)
+   ============================================= */
+
+.card.bg-success,
+.card.text-white.bg-success {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(5,150,105,.35) !important;
+}
+
+.card.bg-danger,
+.card.text-white.bg-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(220,38,38,.3) !important;
+}
+
+.card.bg-warning,
+.card.text-white.bg-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(245,158,11,.3) !important;
+  color: #fff !important;
+}
+
+.card.bg-secondary,
+.card.text-white.bg-secondary {
+  background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(71,85,105,.25) !important;
+}
+
+.card.bg-primary,
+.card.text-white.bg-primary {
+  background: linear-gradient(135deg, #059669 0%, #0284c7 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(5,150,105,.3) !important;
+}
+
+.card.bg-info,
+.card.text-white.bg-info {
+  background: linear-gradient(135deg, #0284c7 0%, #075985 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(2,132,199,.3) !important;
+}
+
+/* Make gradient cards lift slightly on hover */
+.card.bg-success:hover,
+.card.bg-danger:hover,
+.card.bg-warning:hover,
+.card.bg-secondary:hover,
+.card.bg-primary:hover,
+.card.bg-info:hover {
+  transform: translateY(-2px);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+/* Slightly larger body text inside colored stat cards */
+.card.bg-success .card-body,
+.card.bg-danger  .card-body,
+.card.bg-warning .card-body,
+.card.bg-secondary .card-body,
+.card.bg-primary .card-body,
+.card.bg-info .card-body {
+  padding: 1.1rem 1.25rem;
+}
+
+/* Nav icon glow on active */
+.nav-item.active i {
+  filter: drop-shadow(0 0 4px rgba(110,231,183,.4));
+}
+
+/* Table: zebra stripe instead of pure white */
+.table tbody tr:nth-child(even) { background: #FAFBFC; }
+
+/* Header: add subtle bottom gradient line */
+.app-header {
+  background: #fff;
+  border-bottom: 2px solid var(--primary-light);
+}

@@ -68,10 +68,10 @@
         <div class="col-md-4">
             <select name="durum" class="form-select">
                 <option value="">-- Tüm Durumlar --</option>
-                @foreach (var d in Enum.GetValues<DernekYonetim.Models.OdemeDurumu>())
-                {
-                    <option value="@d">@d</option>
-                }
+                <option value="Bekliyor" selected="@(ViewBag.Durum == "Bekliyor")">Bekliyor</option>
+                <option value="Odendi"   selected="@(ViewBag.Durum == "Odendi")">Ödendi</option>
+                <option value="Gecikti"  selected="@(ViewBag.Durum == "Gecikti")">Gecikti</option>
+                <option value="Iptal"    selected="@(ViewBag.Durum == "Iptal")">İptal</option>
             </select>
         </div>
         <div class="col-md-2">

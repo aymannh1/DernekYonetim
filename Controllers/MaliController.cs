@@ -118,7 +118,7 @@ namespace DernekYonetim.Controllers
             var aylar = Enumerable.Range(1, 12).Select(ay => new
             {
                 Ay = ay,
-                AyAdi = new DateTime(yil, ay, 1).ToString("MMM"),
+                AyAdi = new DateTime(yil, ay, 1).ToString("MMMM", new System.Globalization.CultureInfo("tr-TR")),
                 Gelir = aylikRapor
                     .Where(r => r.Ay == ay && r.Tur == MaliHareketTuru.Gelir)
                     .Sum(r => r.Top),

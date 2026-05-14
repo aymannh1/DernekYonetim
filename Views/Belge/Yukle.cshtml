@@ -48,8 +48,10 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label asp-for="ErisimSeviyesi" class="form-label">Erişim Seviyesi</label>
-                                <select asp-for="ErisimSeviyesi" class="form-select"
-                                        asp-items="Html.GetEnumSelectList<DernekYonetim.Models.BelgeErisim>()">
+                                <select asp-for="ErisimSeviyesi" class="form-select">
+                                    <option value="HerkesAcik"     selected="@(Model.ErisimSeviyesi == DernekYonetim.Models.BelgeErisim.HerkesAcik)">Herkese Açık</option>
+                                    <option value="UyeyeOzel"      selected="@(Model.ErisimSeviyesi == DernekYonetim.Models.BelgeErisim.UyeyeOzel)">Üyelere Özel</option>
+                                    <option value="SadeceYonetim"  selected="@(Model.ErisimSeviyesi == DernekYonetim.Models.BelgeErisim.SadeceYonetim)">Sadece Yönetim</option>
                                 </select>
                             </div>
                         </div>
